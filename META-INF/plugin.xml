@@ -1,0 +1,30 @@
+<!DOCTYPE idea-plugin PUBLIC "Plugin/DTD" "http://plugins.intellij.net/plugin.dtd">
+<idea-plugin>
+  <name>Key promoter</name>
+  <description>Shows to user how easy he can make same action using only keyboard(menus and toolbar button mouse clicks initiates shortcut display)</description>
+  <version>0.7</version>
+  <vendor email="kashin_d@hotmail.ru">Dmitry Kashin</vendor>
+        <change-notes><![CDATA[<ul>
+        <li> 0.7 </li>
+        <ul>
+          <li> Added configuration </li>
+          <li> Added support for buttons that has mnemonics (disabled by default)(Known issue: For Mac Alt displayed as mnemonic trigger) </li>
+        </ul>
+        <li> 0.6 </li>
+        <ul>
+          <li> Tool window button click added </li>
+          <li> Animation changed </li>
+          <li> Mac menus clicks now supported (thanks to Yegor Yarko and Dmitry Jemerov) </li>
+        </ul>
+    </ul>]]>
+  </change-notes>
+  <idea-version since-build="3000"/>
+    <application-components>
+        <component>
+            <implementation-class>org.intellij.contest.keypromoter.KeyPromoter</implementation-class>
+        </component>
+        <component>
+            <implementation-class>org.intellij.contest.keypromoter.KeyPromoterConfiguration</implementation-class>
+        </component>
+    </application-components>
+</idea-plugin>

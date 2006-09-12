@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="org.intellij.contest.keypromoter.KeyPromoterConfiguration">
+  <grid id="440c1" binding="myConfigPanel" row-count="3" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+    <margin top="0" left="0" bottom="0" right="0"/>
+    <constraints>
+      <xy x="60" y="28" width="557" height="304"/>
+      <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3"/>
+    </constraints>
+    <properties/>
+    <border type="none"/>
+    <children>
+      <grid id="f7693" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+        <margin top="0" left="0" bottom="0" right="0"/>
+        <constraints>
+          <xy x="0" y="0" width="461" height="129"/>
+          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3"/>
+        </constraints>
+        <properties/>
+        <border type="none"/>
+        <children>
+          <grid id="7dff4" row-count="4" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+            <margin top="0" left="0" bottom="0" right="0"/>
+            <constraints>
+              <xy x="205" y="0" width="256" height="129"/>
+              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3"/>
+            </constraints>
+            <properties/>
+            <border type="etched" title="Animation settings"/>
+            <children>
+              <component id="3395d" class="javax.swing.JSpinner" binding="myDisplayTime">
+                <constraints>
+                  <xy x="153" y="20" width="54" height="22"/>
+                  <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1"/>
+                </constraints>
+                <properties/>
+              </component>
+              <component id="47540" class="javax.swing.JLabel">
+                <constraints>
+                  <xy x="6" y="51" width="137" height="14"/>
+                  <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0"/>
+                </constraints>
+                <properties>
+                  <text value="Flashing animation delay(ms)"/>
+                </properties>
+              </component>
+              <component id="74566" class="javax.swing.JSpinner" binding="myAnimationDelay">
+                <constraints>
+                  <xy x="153" y="47" width="54" height="22"/>
+                  <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1"/>
+                </constraints>
+                <properties/>
+              </component>
+              <component id="bf0f5" class="javax.swing.JLabel">
+                <constraints>
+                  <xy x="6" y="24" width="82" height="14"/>
+                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0"/>
+                </constraints>
+                <properties>
+                  <text value="Display time(ms)"/>
+                </properties>
+              </component>
+              <vspacer id="78920">
+                <constraints>
+                  <xy x="174" y="96" width="11" height="27"/>
+                  <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2"/>
+                </constraints>
+              </vspacer>
+              <hspacer id="89af4">
+                <constraints>
+                  <xy x="207" y="52" width="43" height="11"/>
+                  <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1"/>
+                </constraints>
+              </hspacer>
+              <component id="7b377" class="javax.swing.JLabel">
+                <constraints>
+                  <xy x="6" y="78" width="47" height="14"/>
+                  <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0"/>
+                </constraints>
+                <properties>
+                  <text value="Font size"/>
+                </properties>
+              </component>
+              <component id="6a400" class="javax.swing.JSpinner" binding="myFontSize">
+                <constraints>
+                  <xy x="153" y="74" width="54" height="22"/>
+                  <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1"/>
+                </constraints>
+                <properties/>
+              </component>
+            </children>
+          </grid>
+          <grid id="e09e3" row-count="4" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+            <margin top="0" left="0" bottom="0" right="0"/>
+            <constraints>
+              <xy x="0" y="0" width="195" height="129"/>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3"/>
+            </constraints>
+            <properties/>
+            <border type="etched" title="Enabled for"/>
+            <children>
+              <component id="fa130" class="javax.swing.JCheckBox" binding="myMenus">
+                <constraints>
+                  <xy x="6" y="20" width="57" height="22"/>
+                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0"/>
+                </constraints>
+                <properties>
+                  <text value="Menus"/>
+                </properties>
+              </component>
+              <component id="b747c" class="javax.swing.JCheckBox" binding="myToobarButtons">
+                <constraints>
+                  <xy x="6" y="47" width="102" height="22"/>
+                  <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0"/>
+                </constraints>
+                <properties>
+                  <text value="Toolbar buttons"/>
+                </properties>
+              </component>
+              <component id="b8eb5" class="javax.swing.JCheckBox" binding="myToolWindowButtons">
+                <constraints>
+                  <xy x="6" y="74" width="125" height="22"/>
+                  <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0"/>
+                </constraints>
+                <properties>
+                  <text value="Tool window buttons"/>
+                </properties>
+              </component>
+              <component id="dfdc" class="javax.swing.JCheckBox" binding="myAllButtons">
+                <constraints>
+                  <xy x="6" y="101" width="137" height="22"/>
+                  <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0"/>
+                </constraints>
+                <properties>
+                  <text value="All buttons(mnemonics)"/>
+                </properties>
+              </component>
+            </children>
+          </grid>
+        </children>
+      </grid>
+      <grid id="ba2ad" row-count="3" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+        <margin top="0" left="0" bottom="0" right="0"/>
+        <constraints>
+          <xy x="0" y="134" width="461" height="150"/>
+          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3"/>
+        </constraints>
+        <properties/>
+        <border type="etched" title="Colors"/>
+        <children>
+          <component id="a0a47" class="com.intellij.ui.ColorPanel" binding="myBackgroundColor">
+            <constraints>
+              <xy x="200" y="63" width="235" height="38"/>
+              <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0"/>
+            </constraints>
+            <properties/>
+          </component>
+          <component id="de903" class="com.intellij.ui.ColorPanel" binding="myBorderColor">
+            <constraints>
+              <xy x="200" y="106" width="235" height="38"/>
+              <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0"/>
+            </constraints>
+            <properties/>
+          </component>
+          <component id="9a0d4" class="javax.swing.JLabel">
+            <constraints>
+              <xy x="6" y="32" width="52" height="14"/>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0"/>
+            </constraints>
+            <properties>
+              <text value="Text color"/>
+            </properties>
+          </component>
+          <component id="5a089" class="javax.swing.JLabel">
+            <constraints>
+              <xy x="6" y="75" width="184" height="14"/>
+              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0"/>
+            </constraints>
+            <properties>
+              <text value="Background color(transparency used)"/>
+            </properties>
+          </component>
+          <component id="665a0" class="javax.swing.JLabel">
+            <constraints>
+              <xy x="6" y="118" width="107" height="14"/>
+              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0"/>
+            </constraints>
+            <properties>
+              <text value="Border color(flashing)"/>
+            </properties>
+          </component>
+          <component id="deb0c" class="com.intellij.ui.ColorPanel" binding="myTextColor">
+            <constraints>
+              <xy x="200" y="20" width="235" height="38"/>
+              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0"/>
+            </constraints>
+            <properties/>
+          </component>
+          <hspacer id="82003">
+            <constraints>
+              <xy x="435" y="76" width="20" height="11"/>
+              <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1"/>
+            </constraints>
+          </hspacer>
+        </children>
+      </grid>
+      <hspacer id="be7c0">
+        <constraints>
+          <xy x="461" y="203" width="96" height="11"/>
+          <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1"/>
+        </constraints>
+      </hspacer>
+      <vspacer id="c9c02">
+        <constraints>
+          <xy x="225" y="284" width="11" height="20"/>
+          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2"/>
+        </constraints>
+      </vspacer>
+    </children>
+  </grid>
+</form>
