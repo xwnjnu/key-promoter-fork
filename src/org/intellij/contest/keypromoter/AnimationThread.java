@@ -63,7 +63,8 @@ class AnimationThread extends Thread {
 
                 // Restore the old composite.
                 g2d.setComposite(oldComp);
-                g2d.setColor(mySettings.getBackgroundColor());
+                Color backgroundColor = mySettings.getBackgroundColor();
+                g2d.setColor(new Color(backgroundColor.getRed(), backgroundColor.getGreen(), backgroundColor.getBlue(), 128));
                 g2d.fillRect(3, 3, getWidth() - 6, getHeight() - 6);
                 super.paintComponent(g);
             }

@@ -10,7 +10,7 @@ public class KeyPromoterSettings {
 
     public Color textColor = Color.BLACK;
     public Color borderColor = Color.RED;
-    public Color backgroundColor = new Color(0x40202040, true);
+    public Color backgroundColor = new Color(0x202040);
 
     public boolean menusEnabled = true;
     public boolean toolbarButtonsEnabled = true;
