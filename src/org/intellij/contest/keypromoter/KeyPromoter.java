@@ -25,14 +25,20 @@ import java.util.HashMap;
  * Time: 14:11:03
  */
 public class KeyPromoter implements ApplicationComponent {
+
     private AWTEventListener listener;
+    // Fields with actions of supported classes
     private Map<Class, Field> myClassFields = new HashMap<Class, Field>(5);
+    // Supported classes which contains actions in fields
     private Class[] mySupportedClasses = new Class[]{ActionMenuItem.class, ActionButton.class};
+    // DataContext field to get frame on Mac for example
     private Field myMenuItemDataContextField;
     private KeyPromoterSettings mySettings;
+    // Alarm object to perform animation effects
+    private Alarm myAlarm = new Alarm(Alarm.ThreadToUse.SHARED_THREAD);
 
     public void initComponent() {
-        listener = new MyAWTEventListener();
+        listener = new MouseAWTEventListener();
         Toolkit.getDefaultToolkit().addAWTEventListener(listener, AWTEvent.MOUSE_EVENT_MASK);
         KeyPromoterConfiguration component = ApplicationManager.getApplication().getComponent(KeyPromoterConfiguration.class);
         mySettings = component.getSettings();
@@ -49,6 +55,7 @@ public class KeyPromoter implements ApplicationComponent {
         myMenuItemDataContextField = getFieldOfType(ActionMenuItem.class, DataContext.class);
     }
 
+    // Get first field of class with target type
     private Field getFieldOfType(Class<?> aClass, Class<?> targetClass) {
         Field[] declaredFields = aClass.getDeclaredFields();
         for (int i = 0; i < declaredFields.length; i++) {
@@ -69,16 +76,11 @@ public class KeyPromoter implements ApplicationComponent {
         return "KeyPromoter";
     }
 
-    private class MyAWTEventListener implements AWTEventListener {
+    private class MouseAWTEventListener implements AWTEventListener {
         private Logger logger = Logger.getInstance("org.intellij.contest.keypromoter.KeyPromoter");
 
-        private Alarm myAlarm;
-        private JLabel myTip;
+        private TipLabel myTip;
         private int TIP_LAYER = TIP_LAYER = JLayeredPane.DRAG_LAYER + 1;
-
-        public MyAWTEventListener() {
-            myAlarm = new Alarm(Alarm.ThreadToUse.SHARED_THREAD);
-        }
 
         public void eventDispatched(AWTEvent e) {
             if (e.getID() == MouseEvent.MOUSE_RELEASED) {
@@ -146,29 +148,27 @@ public class KeyPromoter implements ApplicationComponent {
             JLayeredPane layeredPane = frame.getLayeredPane();
 
             myAlarm.cancelAllRequests();
-            if (myTip != null) {
-                layeredPane.remove(myTip);
+            if (myTip == null) {
+                myTip = new TipLabel(text, mySettings);
+                layeredPane.add(myTip, TIP_LAYER);
+            } else {
+                myTip.init(text, mySettings);
             }
-
-            myTip = new TipLabel(text, mySettings);
             myTip.setLocation((int)(frame.getWidth() - myTip.getSize().getWidth()) / 2,
                     (int) (frame.getHeight() - myTip.getSize().getHeight() - 100));
-            layeredPane.add(myTip, TIP_LAYER);
 
             long stepsCount = mySettings.getDisplayTime() / mySettings.getFlashAnimationDelay();
-
+            myTip.setVisible(true);
             // Alpha transparency decreased on each redraw by cycle
-            myAlarm.addRequest(new RepaintRunnable(myTip, layeredPane, stepsCount), (int) mySettings.getFlashAnimationDelay());
+            myAlarm.addRequest(new RepaintRunnable(myTip, stepsCount), (int) mySettings.getFlashAnimationDelay());
         }
 
         private class RepaintRunnable implements Runnable {
             private final JLabel jLabel;
-            private Container container;
             private long stepsCount;
 
-            public RepaintRunnable(JLabel jLabel, Container layeredPane, long stepsCount) {
+            public RepaintRunnable(JLabel jLabel, long stepsCount) {
                 this.jLabel = jLabel;
-                this.container = layeredPane;
                 this.stepsCount = stepsCount;
             }
 
@@ -177,8 +177,7 @@ public class KeyPromoter implements ApplicationComponent {
                 if (stepsCount-- > 0) {
                     myAlarm.addRequest(this, (int) mySettings.getFlashAnimationDelay());
                 } else {
-                    container.remove(jLabel);
-                    container.repaint();
+                    jLabel.setVisible(false);
                 }
             }
         }

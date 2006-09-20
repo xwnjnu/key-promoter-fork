@@ -16,10 +16,15 @@ class TipLabel extends JLabel {
     private KeyPromoterSettings mySettings;
 
     public TipLabel(String text, KeyPromoterSettings mySettings) {
-        super(text);
+        super();
         this.mySettings = mySettings;
         myAlphaValue = 0f;
         setOpaque(false);
+        init(text, mySettings);
+    }
+
+    public void init(String text, KeyPromoterSettings mySettings) {
+        setText(text);
         setFont(getFont().deriveFont(mySettings.getFontSize()));
         setForeground(mySettings.getTextColor());
         int textWidth = FontUtil.getTextWidth(getFont(), text);
@@ -55,8 +60,9 @@ class TipLabel extends JLabel {
         // Restore the old composite.
         g2d.setComposite(oldComp);
         Color backgroundColor = mySettings.getBackgroundColor();
-        g2d.setColor(new Color(backgroundColor.getRed(), backgroundColor.getGreen(), backgroundColor.getBlue(), 128));
+        g2d.setColor(new Color(backgroundColor.getRed(), backgroundColor.getGreen(), backgroundColor.getBlue(), 96));
         g2d.fillRect(3, 3, getWidth() - 6, getHeight() - 6);
         super.paintComponent(g);
     }
+
 }
