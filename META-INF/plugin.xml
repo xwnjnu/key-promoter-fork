@@ -2,9 +2,14 @@
 <idea-plugin>
   <name>Key promoter</name>
   <description>Shows to user how easy he can make same action using only keyboard(menus and toolbar button mouse clicks initiates shortcut display)</description>
-  <version>0.7</version>
+  <version>0.8</version>
   <vendor email="kashin_d@hotmail.ru">Dmitry Kashin</vendor>
         <change-notes><![CDATA[<ul>
+        <li> 0.8 </li>
+        <ul>
+          <li> Previous shortcuts hiding once new appeared. </li>
+          <li> Alpha channel transparency for background added. </li>
+        </ul>
         <li> 0.7 </li>
         <ul>
           <li> Added configuration </li>
