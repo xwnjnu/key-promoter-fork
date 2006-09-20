@@ -11,6 +11,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.wm.impl.StripeButton;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.util.Alarm;
 
 import javax.swing.*;
 import java.awt.*;
@@ -71,15 +72,22 @@ public class KeyPromoter implements ApplicationComponent {
     private class MyAWTEventListener implements AWTEventListener {
         private Logger logger = Logger.getInstance("org.intellij.contest.keypromoter.KeyPromoter");
 
+        private Alarm myAlarm;
+        private JLabel myTip;
+        private int TIP_LAYER = TIP_LAYER = JLayeredPane.DRAG_LAYER + 1;
+
+        public MyAWTEventListener() {
+            myAlarm = new Alarm(Alarm.ThreadToUse.SHARED_THREAD);
+        }
+
         public void eventDispatched(AWTEvent e) {
             if (e.getID() == MouseEvent.MOUSE_RELEASED) {
                 Object source = e.getSource();
                 String shortcutText = "";
                 String description = "";
-                logger.info(e.toString());
+
                 // Handle only menu and tool buttons clicks
                 AnAction anAction = null;
-
                 if (myClassFields.keySet().contains(source.getClass())) {
                     try {
                         if ((mySettings.isMenusEnabled() && source instanceof ActionMenuItem) ||
@@ -126,13 +134,53 @@ public class KeyPromoter implements ApplicationComponent {
                     }
                     if (frame != null) {
                         // Write shortcut to the brain card
-                        Thread myThread = new AnimationThread(frame, description, shortcutText);
-                        myThread.start();
+                        String text = StringUtil.isEmpty(description) ? shortcutText : shortcutText + " (" + description + ")";
+                        showTip(frame, text);
                     }
                 }
 
             }
         }
 
+        private void showTip(JFrame frame, String text) {
+            JLayeredPane layeredPane = frame.getLayeredPane();
+
+            myAlarm.cancelAllRequests();
+            if (myTip != null) {
+                layeredPane.remove(myTip);
+            }
+
+            myTip = new TipLabel(text, mySettings);
+            myTip.setLocation((int)(frame.getWidth() - myTip.getSize().getWidth()) / 2,
+                    (int) (frame.getHeight() - myTip.getSize().getHeight() - 100));
+            layeredPane.add(myTip, TIP_LAYER);
+
+            long stepsCount = mySettings.getDisplayTime() / mySettings.getFlashAnimationDelay();
+
+            // Alpha transparency decreased on each redraw by cycle
+            myAlarm.addRequest(new RepaintRunnable(myTip, layeredPane, stepsCount), (int) mySettings.getFlashAnimationDelay());
+        }
+
+        private class RepaintRunnable implements Runnable {
+            private final JLabel jLabel;
+            private Container container;
+            private long stepsCount;
+
+            public RepaintRunnable(JLabel jLabel, Container layeredPane, long stepsCount) {
+                this.jLabel = jLabel;
+                this.container = layeredPane;
+                this.stepsCount = stepsCount;
+            }
+
+            public void run() {
+                jLabel.repaint();
+                if (stepsCount-- > 0) {
+                    myAlarm.addRequest(this, (int) mySettings.getFlashAnimationDelay());
+                } else {
+                    container.remove(jLabel);
+                    container.repaint();
+                }
+            }
+        }
     }
 }
