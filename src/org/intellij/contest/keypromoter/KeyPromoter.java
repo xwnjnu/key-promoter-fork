@@ -8,7 +8,6 @@ import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.DataConstants;
 import com.intellij.openapi.keymap.KeymapUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.wm.impl.StripeButton;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.util.Alarm;
@@ -19,6 +18,8 @@ import java.awt.event.*;
 import java.lang.reflect.Field;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Collection;
+import java.util.Collections;
 
 /**
  * Date: 04.09.2006
@@ -43,7 +44,7 @@ public class KeyPromoter implements ApplicationComponent {
         KeyPromoterConfiguration component = ApplicationManager.getApplication().getComponent(KeyPromoterConfiguration.class);
         mySettings = component.getSettings();
         // HACK !!!
-        // Some reflection to get actions
+        // Some reflection used to get actions from mouse event sources
         for (int i = 0; i < mySupportedClasses.length; i++) {
             Class mySupportedClass = mySupportedClasses[i];
             Field actionField = getFieldOfType(mySupportedClass, AnAction.class);
@@ -55,7 +56,7 @@ public class KeyPromoter implements ApplicationComponent {
         myMenuItemDataContextField = getFieldOfType(ActionMenuItem.class, DataContext.class);
     }
 
-    // Get first field of class with target type
+    // Get first field of class with target type to use during click source handling
     private Field getFieldOfType(Class<?> aClass, Class<?> targetClass) {
         Field[] declaredFields = aClass.getDeclaredFields();
         for (int i = 0; i < declaredFields.length; i++) {
@@ -77,10 +78,10 @@ public class KeyPromoter implements ApplicationComponent {
     }
 
     private class MouseAWTEventListener implements AWTEventListener {
-        private Logger logger = Logger.getInstance("org.intellij.contest.keypromoter.KeyPromoter");
 
         private TipLabel myTip;
-        private int TIP_LAYER = TIP_LAYER = JLayeredPane.DRAG_LAYER + 1;
+        private JWindow myTipWindow;
+        private Map<String,Integer> stats = Collections.synchronizedMap(new HashMap<String, Integer>());
 
         public void eventDispatched(AWTEvent e) {
             if (e.getID() == MouseEvent.MOUSE_RELEASED) {
@@ -117,52 +118,84 @@ public class KeyPromoter implements ApplicationComponent {
                         }
                 }
 
-                if (!StringUtil.isEmpty(shortcutText)) {
-                    // Get current frame, not sure that it respects API
-                    JFrame frame = (JFrame) SwingUtilities.getAncestorOfClass(JFrame.class, (Component) source);
-                    if (frame == null) {
-                        // On Mac menus detached from main frame :(
-                        if (source instanceof JMenuItem) {
-                            try {
-                                DataContext dataContext = (DataContext) myMenuItemDataContextField.get(source);
-                                if (dataContext != null) {
-                                    Component component = (Component) dataContext.getData(DataConstants.CONTEXT_COMPONENT);
-                                    frame = (JFrame) SwingUtilities.getAncestorOfClass(JFrame.class, component);
-                                }
-                            } catch (Exception e1) {
-                                // it is bad but ...
-                            }
-                        }
-                    }
-                    if (frame != null) {
-                        // Write shortcut to the brain card
-                        String text = StringUtil.isEmpty(description) ? shortcutText : shortcutText + " (" + description + ")";
-                        showTip(frame, text);
-                    }
-                }
+                entertain(e, shortcutText, description);
 
             }
         }
 
-        private void showTip(JFrame frame, String text) {
-            JLayeredPane layeredPane = frame.getLayeredPane();
+        private void entertain(final AWTEvent e, String shortcutText, String description) {
+            Object source = e.getSource();
+            if (!StringUtil.isEmpty(shortcutText)) {
+                // Get current frame, not sure that it respects API
+                JFrame frame = (JFrame) SwingUtilities.getAncestorOfClass(JFrame.class, (Component) source);
+                if (frame == null) {
+                    // On Mac menus detached from main frame :(
+                    if (source instanceof JMenuItem) {
+                        try {
+                            DataContext dataContext = (DataContext) myMenuItemDataContextField.get(source);
+                            if (dataContext != null) {
+                                Component component = (Component) dataContext.getData(DataConstants.CONTEXT_COMPONENT);
+                                frame = (JFrame) SwingUtilities.getAncestorOfClass(JFrame.class, component);
+                            }
+                        } catch (Exception e1) {
+                            // it is bad but ...
+                        }
+                    }
+                }
+                if (frame != null) {
+                    // Write shortcut to the brain card
+                    if (stats.get(shortcutText) == null) {
+                        stats.put(shortcutText, 0);
+                    }
+                    stats.put(shortcutText, stats.get(shortcutText)+1);
 
+                    final String text = (StringUtil.isEmpty(description) ? shortcutText : shortcutText + " (" + description + ")") + " " + stats.get(shortcutText) + " time(s)";
+                    final JFrame frame1 = frame;
+
+                    // Due to delayed dialogs popups or blocking was choosen to set 1 second timeout to wait until action will be invoked and dialog shown if so
+                    myAlarm.addRequest(new Runnable() {
+                        public void run() {
+                            showTip(frame1, e, text);
+                        }
+                    }, 1000);
+                }
+            }
+        }
+
+        private void showTip(JFrame frame, AWTEvent e, String text) {
+
+            // Interrupt any pending requests
             myAlarm.cancelAllRequests();
+
+            // Init tip if it is first run
             if (myTip == null) {
+                myTipWindow = new JWindow(frame);
+                myTipWindow.getContentPane().setLayout(new BorderLayout());
                 myTip = new TipLabel(text, mySettings);
-                layeredPane.add(myTip, TIP_LAYER);
+                myTipWindow.getRootPane().setOpaque(false);
+                myTipWindow.add(myTip);
             } else {
                 myTip.init(text, mySettings);
             }
-            myTip.setLocation((int)(frame.getWidth() - myTip.getSize().getWidth()) / 2,
-                    (int) (frame.getHeight() - myTip.getSize().getHeight() - 100));
+            // If fixed posistion show at the bottom of screen, if not show close to the mouse click position
+            if (mySettings.isFixedTipPosistion()) {
+                myTipWindow.setLocation((int)(frame.getWidth() - myTip.getSize().getWidth()) / 2,
+                        (int) (frame.getHeight() - myTip.getSize().getHeight() - 100));
+            } else {
+                Component source = (Component) e.getSource();
+                myTipWindow.setLocation(SwingUtilities.convertPoint(source,
+                        new Point(source.getWidth() + 2, source.getHeight() + 2), frame));
+            }
+            myTipWindow.pack();
+            myTipWindow.setVisible(true);
 
             long stepsCount = mySettings.getDisplayTime() / mySettings.getFlashAnimationDelay();
-            myTip.setVisible(true);
+
             // Alpha transparency decreased on each redraw by cycle
             myAlarm.addRequest(new RepaintRunnable(myTip, stepsCount), (int) mySettings.getFlashAnimationDelay());
         }
 
+        // Repaints tip with periodically with ability to cancel
         private class RepaintRunnable implements Runnable {
             private final JLabel jLabel;
             private long stepsCount;
@@ -177,7 +210,7 @@ public class KeyPromoter implements ApplicationComponent {
                 if (stepsCount-- > 0) {
                     myAlarm.addRequest(this, (int) mySettings.getFlashAnimationDelay());
                 } else {
-                    jLabel.setVisible(false);
+                    myTipWindow.setVisible(false);
                 }
             }
         }

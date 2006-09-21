@@ -8,6 +8,7 @@ import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.WriteExternalException;
 import com.intellij.openapi.util.DefaultJDOMExternalizer;
 import com.intellij.ui.ColorPanel;
+import com.sun.javaws.jnl.JREDesc;
 
 import javax.swing.*;
 
@@ -28,6 +29,8 @@ public class KeyPromoterConfiguration implements Configurable, ApplicationCompon
     private JCheckBox myToolWindowButtons;
     private JCheckBox myToobarButtons;
     private JCheckBox myMenus;
+    private JCheckBox myFixedTipPosition;
+
     private JSpinner myAnimationDelay;
     private ColorPanel myTextColor;
     private ColorPanel myBackgroundColor;
@@ -35,6 +38,7 @@ public class KeyPromoterConfiguration implements Configurable, ApplicationCompon
     private JSpinner myFontSize;
 
     private KeyPromoterSettings mySettings = new KeyPromoterSettings();
+    private JCheckBox checkBox1;
 
     public String getDisplayName() {
         return "KeyPromoter";
@@ -65,6 +69,7 @@ public class KeyPromoterConfiguration implements Configurable, ApplicationCompon
         if (!myDisplayTime.getValue().equals(mySettings.getDisplayTime())) return true;
         if (!myAnimationDelay.getValue().equals(mySettings.getFlashAnimationDelay())) return true;
         if (!myFontSize.getValue().equals(mySettings.getFontSize())) return true;
+        if (myFixedTipPosition.isSelected() != mySettings.isFixedTipPosistion()) return true;
         return false;
     }
 
@@ -79,6 +84,7 @@ public class KeyPromoterConfiguration implements Configurable, ApplicationCompon
         mySettings.setDisplayTime(new Integer(myDisplayTime.getValue().toString()));
         mySettings.setFlashAnimationDelay(new Integer(myAnimationDelay.getValue().toString()));
         mySettings.setFontSize(new Integer(myFontSize.getValue().toString()));
+        mySettings.setFixedTipPosistion(myFixedTipPosition.isSelected());
     }
 
     public void reset() {
@@ -92,6 +98,7 @@ public class KeyPromoterConfiguration implements Configurable, ApplicationCompon
         myDisplayTime.setValue(mySettings.getDisplayTime());
         myAnimationDelay.setValue(mySettings.getFlashAnimationDelay());
         myFontSize.setValue(mySettings.getFontSize());
+        myFixedTipPosition.setSelected(mySettings.isFixedTipPosistion());
     }
 
     public void disposeUIResources() {

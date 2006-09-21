@@ -2,9 +2,14 @@
 <idea-plugin>
   <name>Key promoter</name>
   <description>Shows to user how easy he can make same action using only keyboard(menus and toolbar button mouse clicks initiates shortcut display)</description>
-  <version>0.8</version>
+  <version>0.9</version>
   <vendor email="kashin_d@hotmail.ru">Dmitry Kashin</vendor>
         <change-notes><![CDATA[<ul>
+        <li> 0.9 </li>
+        <ul>
+          <li> Popup follow the mouse possible now. </li>
+          <li> Per shortcut stats for invokations (count displayed in tip popup). </li>
+        </ul>
         <li> 0.8 </li>
         <ul>
           <li> Previous shortcuts hiding once new appeared. </li>

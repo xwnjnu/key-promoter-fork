@@ -20,6 +20,7 @@ public class KeyPromoterSettings {
     public long displayTime = 3000;
     public long flashAnimationDelay = 150;
     public long fontSize = 40;
+    public boolean fixedTipPosistion = false;
 
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -31,6 +32,7 @@ public class KeyPromoterSettings {
         if (displayTime != that.displayTime) return false;
         if (fontSize != that.fontSize) return false;
         if (flashAnimationDelay != that.flashAnimationDelay) return false;
+        if (fixedTipPosistion != that.fixedTipPosistion) return false;
         if (menusEnabled != that.menusEnabled) return false;
         if (toolWindowButtonsEnabled != that.toolWindowButtonsEnabled) return false;
         if (toolbarButtonsEnabled != that.toolbarButtonsEnabled) return false;
@@ -134,5 +136,13 @@ public class KeyPromoterSettings {
 
     public void setFontSize(long fontSize) {
         this.fontSize = fontSize;
+    }
+
+    public boolean isFixedTipPosistion() {
+        return this.fixedTipPosistion;
+    }
+
+    public void setFixedTipPosistion(boolean fixedTipPosistion) {
+        this.fixedTipPosistion = fixedTipPosistion;
     }
 }
