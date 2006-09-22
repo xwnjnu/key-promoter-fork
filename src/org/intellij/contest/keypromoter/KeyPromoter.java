@@ -1,25 +1,31 @@
 package org.intellij.contest.keypromoter;
 
-import com.intellij.openapi.components.ApplicationComponent;
-import com.intellij.openapi.actionSystem.impl.ActionMenuItem;
-import com.intellij.openapi.actionSystem.impl.ActionButton;
+import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.DataConstants;
-import com.intellij.openapi.keymap.KeymapUtil;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.wm.impl.StripeButton;
+import com.intellij.openapi.actionSystem.DataContext;
+import com.intellij.openapi.actionSystem.impl.ActionButton;
+import com.intellij.openapi.actionSystem.impl.ActionMenuItem;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.components.ApplicationComponent;
+import com.intellij.openapi.keymap.KeymapUtil;
+import com.intellij.openapi.keymap.impl.ui.EditKeymapsDialog;
+import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.wm.impl.IdeFrame;
+import com.intellij.openapi.wm.impl.StripeButton;
+import com.intellij.openapi.ui.Messages;
 import com.intellij.util.Alarm;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.AWTEventListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.WindowEvent;
 import java.lang.reflect.Field;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.Collection;
+import java.text.MessageFormat;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Date: 04.09.2006
@@ -37,10 +43,23 @@ public class KeyPromoter implements ApplicationComponent {
     private KeyPromoterSettings mySettings;
     // Alarm object to perform animation effects
     private Alarm myAlarm = new Alarm(Alarm.ThreadToUse.SHARED_THREAD);
+    // Popup template
+    private static String template = "<html>\n" +
+            "<body>\n" +
+            " <table>\n" +
+            "  <tr>\n" +
+            "   <td align=\"center\"><font size=8>{0}</font></td>\n" +
+            "  </tr>\n" +
+            "  <tr>\n" +
+            "   <td align=\"center\"><font size=6>{1}</font></td>\n" +
+            "  </tr>\n" +
+            " </table>\n" +
+            "</body>\n" +
+            "</html>";
 
     public void initComponent() {
-        listener = new MouseAWTEventListener();
-        Toolkit.getDefaultToolkit().addAWTEventListener(listener, AWTEvent.MOUSE_EVENT_MASK);
+        listener = new MyAWTEventListener();
+        Toolkit.getDefaultToolkit().addAWTEventListener(listener, AWTEvent.MOUSE_EVENT_MASK | AWTEvent.WINDOW_EVENT_MASK);
         KeyPromoterConfiguration component = ApplicationManager.getApplication().getComponent(KeyPromoterConfiguration.class);
         mySettings = component.getSettings();
         // HACK !!!
@@ -77,15 +96,16 @@ public class KeyPromoter implements ApplicationComponent {
         return "KeyPromoter";
     }
 
-    private class MouseAWTEventListener implements AWTEventListener {
+    private class MyAWTEventListener implements AWTEventListener {
 
         private TipLabel myTip;
         private JWindow myTipWindow;
-        private Map<String,Integer> stats = Collections.synchronizedMap(new HashMap<String, Integer>());
+        private Map<String, Integer> stats = Collections.synchronizedMap(new HashMap<String, Integer>());
+        private Map<String, Integer> withoutShortcutStats = Collections.synchronizedMap(new HashMap<String, Integer>());
 
         public void eventDispatched(AWTEvent e) {
             if (e.getID() == MouseEvent.MOUSE_RELEASED) {
-                Object source = e.getSource();
+                final Object source = e.getSource();
                 String shortcutText = "";
                 String description = "";
 
@@ -105,61 +125,92 @@ public class KeyPromoter implements ApplicationComponent {
                         description = anAction.getTemplatePresentation().getText();
                     }
                 } else if (mySettings.isToolWindowButtonsEnabled() && source instanceof StripeButton) {
-                        char mnemonic = ((char) ((StripeButton) source).getMnemonic2());
-                        if (mnemonic >= '0' && mnemonic <= '9') {
-                            shortcutText = "Alt+" + mnemonic;
-                            description = ((StripeButton) source).getText();
-                        }
+                    // This is hack!!!
+                    char mnemonic = ((char) ((StripeButton) source).getMnemonic2());
+                    if (mnemonic >= '0' && mnemonic <= '9') {
+                        shortcutText = "Alt+" + mnemonic;
+                        description = ((StripeButton) source).getText();
+                    }
                 } else if (mySettings.isAllButtonsEnabled() && source instanceof JButton) {
-                        char mnemonic = ((char) ((JButton) source).getMnemonic());
-                        if (mnemonic > 0) {
-                            shortcutText = "Alt+" + mnemonic;
-                            description = ((JButton) source).getText();
-                        }
+                    char mnemonic = ((char) ((JButton) source).getMnemonic());
+                    if (mnemonic > 0) {
+                        // Not respecting Mac Meta key yet
+                        shortcutText = "Alt+" + mnemonic;
+                        description = ((JButton) source).getText();
+                    }
                 }
 
-                entertain(e, shortcutText, description);
+                entertain(e, shortcutText, description, anAction);
 
+            } else if (e.getID() == WindowEvent.WINDOW_ACTIVATED) {
+                // To paint tip over dialogs
+                if (myTipWindow != null && myTipWindow.isVisible()) {
+                    myTipWindow.setVisible(false);
+                    myTipWindow.setVisible(true);
+                    myTipWindow.repaint();
+                }
             }
         }
 
-        private void entertain(final AWTEvent e, String shortcutText, String description) {
+        private void entertain(final AWTEvent e, String shortcutText, String description, AnAction anAction) {
             Object source = e.getSource();
+            JFrame frame = getFrame(source);
             if (!StringUtil.isEmpty(shortcutText)) {
                 // Get current frame, not sure that it respects API
-                JFrame frame = (JFrame) SwingUtilities.getAncestorOfClass(JFrame.class, (Component) source);
-                if (frame == null) {
-                    // On Mac menus detached from main frame :(
-                    if (source instanceof JMenuItem) {
-                        try {
-                            DataContext dataContext = (DataContext) myMenuItemDataContextField.get(source);
-                            if (dataContext != null) {
-                                Component component = (Component) dataContext.getData(DataConstants.CONTEXT_COMPONENT);
-                                frame = (JFrame) SwingUtilities.getAncestorOfClass(JFrame.class, component);
-                            }
-                        } catch (Exception e1) {
-                            // it is bad but ...
-                        }
-                    }
-                }
                 if (frame != null) {
-                    // Write shortcut to the brain card
                     if (stats.get(shortcutText) == null) {
                         stats.put(shortcutText, 0);
                     }
-                    stats.put(shortcutText, stats.get(shortcutText)+1);
+                    stats.put(shortcutText, stats.get(shortcutText) + 1);
 
-                    final String text = (StringUtil.isEmpty(description) ? shortcutText : shortcutText + " (" + description + ")") + " " + stats.get(shortcutText) + " time(s)";
-                    final JFrame frame1 = frame;
+                    // Write shortcut to the brain card
 
-                    // Due to delayed dialogs popups or blocking was choosen to set 1 second timeout to wait until action will be invoked and dialog shown if so
-                    myAlarm.addRequest(new Runnable() {
-                        public void run() {
-                            showTip(frame1, e, text);
+                    showTip(frame, e, renderMessage(description, shortcutText));
+                }
+            } else {
+                if (anAction != null) {
+                    String id = ActionManager.getInstance().getId(anAction);
+                    if (id != null) {
+                        if (withoutShortcutStats.get(id) == null) {
+                            withoutShortcutStats.put(id, 0);
                         }
-                    }, 1000);
+                        withoutShortcutStats.put(id, withoutShortcutStats.get(id) + 1);
+                        if (withoutShortcutStats.get(id) % 3 == 0) {
+                            if (Messages.showYesNoDialog(frame, "Would you like to assign shortcut to '" + anAction.getTemplatePresentation().getDescription() + "'action cause we noticed it was used "+ withoutShortcutStats.get(id) + " time(s) by mouse?",
+                                    "Keyboard usage more productive!", Messages.getQuestionIcon()) == 0) {
+                                EditKeymapsDialog dialog = new EditKeymapsDialog(((IdeFrame) frame).getProject(), id);
+                                dialog.show();
+                            }
+                        }
+                    }
                 }
             }
+        }
+
+        private JFrame getFrame(Object source) {
+            JFrame frame = (JFrame) SwingUtilities.getAncestorOfClass(JFrame.class, (Component) source);
+            if (frame == null) {
+                // On Mac menus detached from main frame :(
+                if (source instanceof JMenuItem) {
+                    try {
+                        DataContext dataContext = (DataContext) myMenuItemDataContextField.get(source);
+                        if (dataContext != null) {
+                            Component component = (Component) dataContext.getData(DataConstants.CONTEXT_COMPONENT);
+                            frame = (JFrame) SwingUtilities.getAncestorOfClass(JFrame.class, component);
+                        }
+                    } catch (Exception e1) {
+                        // it is bad but ...
+                    }
+                }
+            }
+            return frame;
+        }
+
+        private String renderMessage(String description, String shortcutText) {
+            String text = MessageFormat.format(template,
+                    (StringUtil.isEmpty(description) ? shortcutText : shortcutText + " (" + description + ")"),
+                    stats.get(shortcutText) + " time(s)");
+            return text;
         }
 
         private void showTip(JFrame frame, AWTEvent e, String text) {
@@ -177,16 +228,21 @@ public class KeyPromoter implements ApplicationComponent {
             } else {
                 myTip.init(text, mySettings);
             }
+            myTipWindow.pack();
+
             // If fixed posistion show at the bottom of screen, if not show close to the mouse click position
             if (mySettings.isFixedTipPosistion()) {
-                myTipWindow.setLocation((int)(frame.getWidth() - myTip.getSize().getWidth()) / 2,
+                myTipWindow.setLocation((int) (frame.getWidth() - myTip.getSize().getWidth()) / 2,
                         (int) (frame.getHeight() - myTip.getSize().getHeight() - 100));
             } else {
                 Component source = (Component) e.getSource();
-                myTipWindow.setLocation(SwingUtilities.convertPoint(source,
-                        new Point(source.getWidth() + 2, source.getHeight() + 2), frame));
+                // Trying fit to screen
+                Point locationPoint = SwingUtilities.convertPoint(source,
+                        new Point(source.getWidth() + 2, source.getHeight() + 2), frame);
+                locationPoint.x = (int) Math.min(locationPoint.getX(), frame.getWidth() - myTip.getSize().getWidth());
+                locationPoint.y = (int) Math.min(locationPoint.getY(), frame.getHeight() - myTip.getSize().getHeight());
+                myTipWindow.setLocation(locationPoint);
             }
-            myTipWindow.pack();
             myTipWindow.setVisible(true);
 
             long stepsCount = mySettings.getDisplayTime() / mySettings.getFlashAnimationDelay();

@@ -12,7 +12,7 @@
       <grid id="f7693" row-count="2" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
         <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
-          <xy x="0" y="0" width="461" height="202"/>
+          <xy x="0" y="0" width="461" height="175"/>
           <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3"/>
         </constraints>
         <properties/>
@@ -21,7 +21,7 @@
           <grid id="e09e3" row-count="4" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
             <margin top="0" left="0" bottom="0" right="0"/>
             <constraints>
-              <xy x="0" y="0" width="169" height="202"/>
+              <xy x="0" y="0" width="169" height="175"/>
               <grid row="0" column="0" row-span="2" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3"/>
             </constraints>
             <properties/>
@@ -29,7 +29,7 @@
             <children>
               <component id="fa130" class="javax.swing.JCheckBox" binding="myMenus">
                 <constraints>
-                  <xy x="6" y="29" width="57" height="22"/>
+                  <xy x="6" y="26" width="57" height="22"/>
                   <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0"/>
                 </constraints>
                 <properties>
@@ -38,7 +38,7 @@
               </component>
               <component id="b747c" class="javax.swing.JCheckBox" binding="myToobarButtons">
                 <constraints>
-                  <xy x="6" y="75" width="102" height="22"/>
+                  <xy x="6" y="65" width="102" height="22"/>
                   <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0"/>
                 </constraints>
                 <properties>
@@ -47,7 +47,7 @@
               </component>
               <component id="b8eb5" class="javax.swing.JCheckBox" binding="myToolWindowButtons">
                 <constraints>
-                  <xy x="6" y="120" width="125" height="22"/>
+                  <xy x="6" y="103" width="125" height="22"/>
                   <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0"/>
                 </constraints>
                 <properties>
@@ -56,7 +56,7 @@
               </component>
               <component id="dfdc" class="javax.swing.JCheckBox" binding="myAllButtons">
                 <constraints>
-                  <xy x="6" y="165" width="137" height="22"/>
+                  <xy x="6" y="141" width="137" height="22"/>
                   <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0"/>
                 </constraints>
                 <properties>
@@ -68,7 +68,7 @@
           <grid id="7dff4" row-count="4" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
             <margin top="0" left="0" bottom="0" right="0"/>
             <constraints>
-              <xy x="179" y="80" width="282" height="122"/>
+              <xy x="179" y="53" width="282" height="122"/>
               <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3"/>
             </constraints>
             <properties/>
@@ -136,46 +136,30 @@
               </component>
             </children>
           </grid>
-          <grid id="e1172" row-count="2" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+          <grid id="e1172" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
             <margin top="0" left="0" bottom="0" right="0"/>
             <constraints>
-              <xy x="179" y="0" width="282" height="75"/>
+              <xy x="179" y="0" width="282" height="48"/>
               <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3"/>
             </constraints>
             <properties/>
             <border type="etched" title="Appearance"/>
             <children>
-              <component id="ad411" class="javax.swing.JLabel">
-                <constraints>
-                  <xy x="6" y="24" width="47" height="14"/>
-                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0"/>
-                </constraints>
-                <properties>
-                  <text value="Font size"/>
-                </properties>
-              </component>
-              <component id="2054d" class="javax.swing.JSpinner">
-                <constraints>
-                  <xy x="63" y="20" width="184" height="22"/>
-                  <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1"/>
-                </constraints>
-                <properties/>
-              </component>
-              <hspacer id="a16e6">
-                <constraints>
-                  <xy x="247" y="25" width="29" height="11"/>
-                  <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1"/>
-                </constraints>
-              </hspacer>
               <component id="36009" class="javax.swing.JCheckBox" binding="myFixedTipPosition">
                 <constraints>
-                  <xy x="6" y="47" width="231" height="22"/>
-                  <grid row="1" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="8" fill="0"/>
+                  <xy x="6" y="20" width="231" height="22"/>
+                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0"/>
                 </constraints>
                 <properties>
                   <text value="Tip popups always at the bottom of screen"/>
                 </properties>
               </component>
+              <hspacer id="a16e6">
+                <constraints>
+                  <xy x="237" y="25" width="39" height="11"/>
+                  <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1"/>
+                </constraints>
+              </hspacer>
             </children>
           </grid>
         </children>
@@ -183,7 +167,7 @@
       <grid id="ba2ad" row-count="3" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
         <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
-          <xy x="0" y="207" width="461" height="150"/>
+          <xy x="0" y="180" width="461" height="150"/>
           <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3"/>
         </constraints>
         <properties/>
@@ -247,13 +231,13 @@
       </grid>
       <hspacer id="be7c0">
         <constraints>
-          <xy x="461" y="276" width="96" height="11"/>
+          <xy x="461" y="249" width="96" height="11"/>
           <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1"/>
         </constraints>
       </hspacer>
       <vspacer id="c9c02">
         <constraints>
-          <xy x="225" y="357" width="11" height="20"/>
+          <xy x="225" y="330" width="11" height="47"/>
           <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2"/>
         </constraints>
       </vspacer>

@@ -25,11 +25,7 @@ class TipLabel extends JLabel {
 
     public void init(String text, KeyPromoterSettings mySettings) {
         setText(text);
-        setFont(getFont().deriveFont(mySettings.getFontSize()));
         setForeground(mySettings.getTextColor());
-        int textWidth = FontUtil.getTextWidth(getFont(), text);
-        int textHeight = FontUtil.getFontHeight(getFont());
-        setSize(textWidth, textHeight);
     }
 
     // some painting fun
