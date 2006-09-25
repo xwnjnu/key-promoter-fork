@@ -56,7 +56,7 @@ class TipLabel extends JLabel {
         // Restore the old composite.
         g2d.setComposite(oldComp);
         Color backgroundColor = mySettings.getBackgroundColor();
-        g2d.setColor(new Color(backgroundColor.getRed(), backgroundColor.getGreen(), backgroundColor.getBlue(), 96));
+        g2d.setColor(new Color(backgroundColor.getRed(), backgroundColor.getGreen(), backgroundColor.getBlue(), 64));
         g2d.fillRect(3, 3, getWidth() - 6, getHeight() - 6);
         super.paintComponent(g);
     }

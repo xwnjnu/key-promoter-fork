@@ -75,7 +75,7 @@ public class KeyPromoter implements ApplicationComponent {
         myMenuItemDataContextField = getFieldOfType(ActionMenuItem.class, DataContext.class);
     }
 
-    // Get first field of class with target type to use during click source handling
+    // Get first field of class with target type to use during click source handling 
     private Field getFieldOfType(Class<?> aClass, Class<?> targetClass) {
         Field[] declaredFields = aClass.getDeclaredFields();
         for (int i = 0; i < declaredFields.length; i++) {
@@ -176,7 +176,7 @@ public class KeyPromoter implements ApplicationComponent {
                         }
                         withoutShortcutStats.put(id, withoutShortcutStats.get(id) + 1);
                         if (withoutShortcutStats.get(id) % 3 == 0) {
-                            if (Messages.showYesNoDialog(frame, "Would you like to assign shortcut to '" + anAction.getTemplatePresentation().getDescription() + "'action cause we noticed it was used "+ withoutShortcutStats.get(id) + " time(s) by mouse?",
+                            if (Messages.showYesNoDialog(frame, "Would you like to assign shortcut to '" + anAction.getTemplatePresentation().getDescription() + "'action cause we noticed it was used " + withoutShortcutStats.get(id) + " time(s) by mouse?",
                                     "Keyboard usage more productive!", Messages.getQuestionIcon()) == 0) {
                                 EditKeymapsDialog dialog = new EditKeymapsDialog(((IdeFrame) frame).getProject(), id);
                                 dialog.show();
@@ -220,10 +220,11 @@ public class KeyPromoter implements ApplicationComponent {
 
             // Init tip if it is first run
             if (myTip == null) {
-                myTipWindow = new JWindow(frame);
-                myTipWindow.getContentPane().setLayout(new BorderLayout());
+                myTipWindow = new JWindow();
+                JPanel contentPane = new JPanel(new BorderLayout());
+                contentPane.setOpaque(false);
+                myTipWindow.setContentPane(contentPane);
                 myTip = new TipLabel(text, mySettings);
-                myTipWindow.getRootPane().setOpaque(false);
                 myTipWindow.add(myTip);
             } else {
                 myTip.init(text, mySettings);
