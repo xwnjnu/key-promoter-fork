@@ -59,7 +59,7 @@ public class KeyPromoter implements ApplicationComponent {
 
     public void initComponent() {
         listener = new MyAWTEventListener();
-        Toolkit.getDefaultToolkit().addAWTEventListener(listener, AWTEvent.MOUSE_EVENT_MASK | AWTEvent.WINDOW_EVENT_MASK);
+        Toolkit.getDefaultToolkit().addAWTEventListener(listener, AWTEvent.MOUSE_EVENT_MASK | AWTEvent.WINDOW_EVENT_MASK| AWTEvent.WINDOW_STATE_EVENT_MASK);
         KeyPromoterConfiguration component = ApplicationManager.getApplication().getComponent(KeyPromoterConfiguration.class);
         mySettings = component.getSettings();
         // HACK !!!
@@ -98,7 +98,6 @@ public class KeyPromoter implements ApplicationComponent {
 
     private class MyAWTEventListener implements AWTEventListener {
 
-        private TipLabel myTip;
         private JWindow myTipWindow;
         private Map<String, Integer> stats = Collections.synchronizedMap(new HashMap<String, Integer>());
         private Map<String, Integer> withoutShortcutStats = Collections.synchronizedMap(new HashMap<String, Integer>());
@@ -142,7 +141,7 @@ public class KeyPromoter implements ApplicationComponent {
 
                 entertain(e, shortcutText, description, anAction);
 
-            } else if (e.getID() == WindowEvent.WINDOW_ACTIVATED) {
+            } else if (e.getID() == WindowEvent.WINDOW_ACTIVATED | e.getID() == Event.WINDOW_MOVED) {
                 // To paint tip over dialogs
                 if (myTipWindow != null && myTipWindow.isVisible()) {
                     myTipWindow.setVisible(false);
@@ -219,16 +218,16 @@ public class KeyPromoter implements ApplicationComponent {
             myAlarm.cancelAllRequests();
 
             // Init tip if it is first run
-            if (myTip == null) {
-                myTipWindow = new JWindow();
-                JPanel contentPane = new JPanel(new BorderLayout());
-                contentPane.setOpaque(false);
-                myTipWindow.setContentPane(contentPane);
-                myTip = new TipLabel(text, mySettings);
-                myTipWindow.add(myTip);
-            } else {
-                myTip.init(text, mySettings);
+            if (myTipWindow != null) {
+                myTipWindow.dispose();
+                myTipWindow = null;
             }
+            myTipWindow = new JWindow(frame);
+            JPanel contentPane = new JPanel(new BorderLayout());
+            contentPane.setOpaque(false);
+            myTipWindow.setContentPane(contentPane);
+            TipLabel myTip = new TipLabel(text, mySettings);
+            myTipWindow.add(myTip);
             myTipWindow.pack();
 
             // If fixed posistion show at the bottom of screen, if not show close to the mouse click position
@@ -249,25 +248,24 @@ public class KeyPromoter implements ApplicationComponent {
             long stepsCount = mySettings.getDisplayTime() / mySettings.getFlashAnimationDelay();
 
             // Alpha transparency decreased on each redraw by cycle
-            myAlarm.addRequest(new RepaintRunnable(myTip, stepsCount), (int) mySettings.getFlashAnimationDelay());
+            myAlarm.addRequest(new RepaintRunnable(stepsCount), (int) mySettings.getFlashAnimationDelay());
         }
 
         // Repaints tip with periodically with ability to cancel
         private class RepaintRunnable implements Runnable {
-            private final JLabel jLabel;
             private long stepsCount;
 
-            public RepaintRunnable(JLabel jLabel, long stepsCount) {
-                this.jLabel = jLabel;
+            public RepaintRunnable(long stepsCount) {
                 this.stepsCount = stepsCount;
             }
 
             public void run() {
-                jLabel.repaint();
+                myTipWindow.repaint();
                 if (stepsCount-- > 0) {
                     myAlarm.addRequest(this, (int) mySettings.getFlashAnimationDelay());
                 } else {
-                    myTipWindow.setVisible(false);
+                    myTipWindow.dispose();
+                    myTipWindow = null;
                 }
             }
         }
