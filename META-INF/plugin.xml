@@ -8,6 +8,7 @@
         <li> 1.0.1 </li>
         <ul>
           <li> Popup redraw issues fixed. </li>
+          <li> Right click now ignored. </li>
         </ul>
         <li> 1.0 </li>
         <ul>
