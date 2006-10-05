@@ -2,13 +2,15 @@
 <idea-plugin>
   <name>Key promoter</name>
   <description>Shows to user how easy he can make same action using only keyboard(menus and toolbar button mouse clicks initiates shortcut display)</description>
-  <version>1.0.1</version>
+  <version>1.0.2</version>
   <vendor email="kashin_d@hotmail.ru">Dmitry Kashin</vendor>
         <change-notes><![CDATA[<ul>
-        <li> 1.0.1 </li>
+        <li> 1.0.2 </li>
         <ul>
           <li> Popup redraw issues fixed. </li>
           <li> Right click now ignored. </li>
+          <li> Refactored and source bundled with plugin (<a href="http://plugins.intellij.net/plugin/?id=1017">PluginPacker plugin</a> used for packaging). </li>
+          <li> Bugfixes. </li>
         </ul>
         <li> 1.0 </li>
         <ul>
@@ -19,7 +21,7 @@
         <li> 0.9 </li>
         <ul>
           <li> Popup follow the mouse possible now. </li>
-          <li> Per shortcut stats for invokations (count displayed in tip popup). </li>
+          <li> Per shortcut stats for invocations (count displayed in tip popup). </li>
         </ul>
         <li> 0.8 </li>
         <ul>
@@ -42,10 +44,10 @@
   <idea-version since-build="3000"/>
     <application-components>
         <component>
-            <implementation-class>org.intellij.contest.keypromoter.KeyPromoter</implementation-class>
+            <implementation-class>org.jetbrains.contest.keypromoter.KeyPromoter</implementation-class>
         </component>
         <component>
-            <implementation-class>org.intellij.contest.keypromoter.KeyPromoterConfiguration</implementation-class>
+            <implementation-class>org.jetbrains.contest.keypromoter.KeyPromoterConfiguration</implementation-class>
         </component>
     </application-components>
 </idea-plugin>

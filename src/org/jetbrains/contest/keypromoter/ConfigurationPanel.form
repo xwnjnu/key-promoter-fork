@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="org.intellij.contest.keypromoter.KeyPromoterConfiguration">
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="org.jetbrains.contest.keypromoter.KeyPromoterConfiguration">
   <grid id="440c1" binding="myConfigPanel" layout-manager="GridBagLayout">
     <constraints>
       <xy x="60" y="28" width="557" height="377"/>
@@ -107,7 +107,9 @@
                   <gridbag weightx="0.0" weighty="0.0"/>
                 </constraints>
                 <properties>
+                  <enabled value="false"/>
                   <text value="Font size"/>
+                  <visible value="false"/>
                 </properties>
               </component>
               <component id="6a400" class="javax.swing.JSpinner" binding="myFontSize">
@@ -115,7 +117,10 @@
                   <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
                   <gridbag weightx="1.0" weighty="0.0"/>
                 </constraints>
-                <properties/>
+                <properties>
+                  <enabled value="false"/>
+                  <visible value="false"/>
+                </properties>
               </component>
             </children>
           </grid>

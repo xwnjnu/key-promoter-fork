@@ -1,4 +1,4 @@
-package org.intellij.contest.keypromoter;
+package org.jetbrains.contest.keypromoter;
 
 import java.awt.*;
 

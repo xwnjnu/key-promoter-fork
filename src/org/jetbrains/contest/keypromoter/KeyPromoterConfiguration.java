@@ -1,4 +1,4 @@
-package org.intellij.contest.keypromoter;
+package org.jetbrains.contest.keypromoter;
 
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
@@ -8,7 +8,6 @@ import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.WriteExternalException;
 import com.intellij.openapi.util.DefaultJDOMExternalizer;
 import com.intellij.ui.ColorPanel;
-import com.sun.javaws.jnl.JREDesc;
 
 import javax.swing.*;
 
