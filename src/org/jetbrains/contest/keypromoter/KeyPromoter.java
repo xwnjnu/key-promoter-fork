@@ -21,6 +21,7 @@ import java.awt.*;
 import java.awt.event.AWTEventListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
+import java.awt.event.KeyEvent;
 import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.HashMap;
@@ -50,7 +51,7 @@ public class KeyPromoter implements ApplicationComponent, AWTEventListener {
 
 
     public void initComponent() {
-        Toolkit.getDefaultToolkit().addAWTEventListener(this, AWTEvent.MOUSE_EVENT_MASK | AWTEvent.WINDOW_EVENT_MASK | AWTEvent.WINDOW_STATE_EVENT_MASK);
+        Toolkit.getDefaultToolkit().addAWTEventListener(this, AWTEvent.MOUSE_EVENT_MASK | AWTEvent.WINDOW_EVENT_MASK | AWTEvent.WINDOW_STATE_EVENT_MASK | AWTEvent.KEY_EVENT_MASK);
         KeyPromoterConfiguration component = ApplicationManager.getApplication().getComponent(KeyPromoterConfiguration.class);
         mySettings = component.getSettings();
         // HACK !!!
@@ -77,51 +78,67 @@ public class KeyPromoter implements ApplicationComponent, AWTEventListener {
     // AWT magic
     public void eventDispatched(AWTEvent e) {
         if (e.getID() == MouseEvent.MOUSE_RELEASED && ((MouseEvent)e).getButton() == MouseEvent.BUTTON1) {
-            final Object source = e.getSource();
-            String shortcutText = "";
-            String description = "";
-
-            // Handle only menu and tool buttons clicks
-            AnAction anAction = null;
-            if (myClassFields.keySet().contains(source.getClass())) {
-                try {
-                    if ((mySettings.isMenusEnabled() && source instanceof ActionMenuItem) ||
-                            (mySettings.isToolbarButtonsEnabled() && source instanceof ActionButton)) {
-                        anAction = (AnAction) myClassFields.get(source.getClass()).get(source);
-                    }
-                } catch (IllegalAccessException e1) {
-                    // it is bad but ...
-                }
-                if (anAction != null) {
-                    shortcutText = KeymapUtil.getFirstKeyboardShortcutText(anAction);
-                    description = anAction.getTemplatePresentation().getText();
-                }
-            } else if (mySettings.isToolWindowButtonsEnabled() && source instanceof StripeButton) {
-                // This is hack!!!
-                char mnemonic = ((char) ((StripeButton) source).getMnemonic2());
-                if (mnemonic >= '0' && mnemonic <= '9') {
-                    shortcutText = "Alt+" + mnemonic;
-                    description = ((StripeButton) source).getText();
-                }
-            } else if (mySettings.isAllButtonsEnabled() && source instanceof JButton) {
-                char mnemonic = ((char) ((JButton) source).getMnemonic());
-                if (mnemonic > 0) {
-                    // Not respecting Mac Meta key yet
-                    shortcutText = "Alt+" + mnemonic;
-                    description = ((JButton) source).getText();
-                }
-            }
-
-            handle(e, shortcutText, description, anAction);
+            handleMouseEvent(e);
 
         } else if (e.getID() == WindowEvent.WINDOW_ACTIVATED | e.getID() == Event.WINDOW_MOVED) {
-            // To paint tip over dialogs
-            if (myTipWindow != null && myTipWindow.isVisible()) {
-                myTipWindow.setVisible(false);
-                myTipWindow.setVisible(true);
-                myTipWindow.repaint();
+            handleWindowEvent(e);
+
+        } else if (e.getID() == KeyEvent.KEY_PRESSED) {
+            handleKeyboardEvent(e);
+
+        }
+    }
+
+    private void handleKeyboardEvent(AWTEvent e) {
+        
+    }
+
+    private void handleWindowEvent(AWTEvent e) {
+        // To paint tip over dialogs
+        if (myTipWindow != null && myTipWindow.isVisible()) {
+            myTipWindow.setVisible(false);
+            myTipWindow.setVisible(true);
+            myTipWindow.repaint();
+        }
+    }
+
+    private void handleMouseEvent(AWTEvent e) {
+        final Object source = e.getSource();
+        String shortcutText = "";
+        String description = "";
+
+        // Handle only menu and tool buttons clicks
+        AnAction anAction = null;
+        if (myClassFields.keySet().contains(source.getClass())) {
+            try {
+                if ((mySettings.isMenusEnabled() && source instanceof ActionMenuItem) ||
+                        (mySettings.isToolbarButtonsEnabled() && source instanceof ActionButton)) {
+                    anAction = (AnAction) myClassFields.get(source.getClass()).get(source);
+                }
+            } catch (IllegalAccessException e1) {
+                // it is bad but ...
+            }
+            if (anAction != null) {
+                shortcutText = KeymapUtil.getFirstKeyboardShortcutText(anAction);
+                description = anAction.getTemplatePresentation().getText();
+            }
+        } else if (mySettings.isToolWindowButtonsEnabled() && source instanceof StripeButton) {
+            // This is hack!!!
+            char mnemonic = ((char) ((StripeButton) source).getMnemonic2());
+            if (mnemonic >= '0' && mnemonic <= '9') {
+                shortcutText = "Alt+" + mnemonic;
+                description = ((StripeButton) source).getText();
+            }
+        } else if (mySettings.isAllButtonsEnabled() && source instanceof JButton) {
+            char mnemonic = ((char) ((JButton) source).getMnemonic());
+            if (mnemonic > 0) {
+                // Not respecting Mac Meta key yet
+                shortcutText = "Alt+" + mnemonic;
+                description = ((JButton) source).getText();
             }
         }
+
+        handle(e, shortcutText, description, anAction);
     }
 
     private void handle(final AWTEvent e, String shortcutText, String description, AnAction anAction) {
