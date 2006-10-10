@@ -1,14 +1,12 @@
 package org.jetbrains.contest.keypromoter;
 
-import com.intellij.openapi.actionSystem.ActionManager;
-import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.actionSystem.DataConstants;
-import com.intellij.openapi.actionSystem.DataContext;
+import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.actionSystem.impl.ActionButton;
 import com.intellij.openapi.actionSystem.impl.ActionMenuItem;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.keymap.KeymapUtil;
+import com.intellij.openapi.keymap.KeymapManager;
 import com.intellij.openapi.keymap.impl.ui.EditKeymapsDialog;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.wm.impl.IdeFrame;
@@ -18,14 +16,13 @@ import com.intellij.util.Alarm;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.AWTEventListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.WindowEvent;
-import java.awt.event.KeyEvent;
+import java.awt.event.*;
 import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Date: 04.09.2006
@@ -90,7 +87,33 @@ public class KeyPromoter implements ApplicationComponent, AWTEventListener {
     }
 
     private void handleKeyboardEvent(AWTEvent e) {
-        
+        KeyEvent event = (KeyEvent) e;
+        if (event.getKeyCode() == KeyEvent.VK_CONTROL || event.getKeyCode() == KeyEvent.VK_ALT) {
+            String[] actionIds = KeymapManager.getInstance().getActiveKeymap().getActionIds();
+            ActionManager actionManager = ActionManager.getInstance();
+            for (int i = 0; i < actionIds.length; i++) {
+                String actionId = actionIds[i];
+                AnAction action = actionManager.getAction(actionId);
+                if (action != null && action.getShortcutSet() != null) {
+                    String shortcutText = KeymapUtil.getFirstKeyboardShortcutText(action);
+                    if (("pressed "+ shortcutText).toLowerCase().startsWith(KeyStroke.getKeyStroke(event.getKeyCode(), 0).toString().toLowerCase())) {
+                        action.update(new AnActionEvent((InputEvent) e, new DataContext() {
+                                @Nullable
+                                public Object getData(String dataId) {
+                                    return null;  //To change body of implemented methods use File | Settings | File Templates.
+                                }
+                            },"", action.getTemplatePresentation(),actionManager, event.getModifiers()));
+                        if (action.getTemplatePresentation().isEnabled()) {
+                            System.out.println(shortcutText + " " + action.getTemplatePresentation().getText());
+                        }
+                    }
+                }
+            }
+
+        }
+        if ((event.getModifiers() & KeyEvent.CTRL_DOWN_MASK) == KeyEvent.CTRL_DOWN_MASK) {
+            System.out.println("bu");
+        }
     }
 
     private void handleWindowEvent(AWTEvent e) {
