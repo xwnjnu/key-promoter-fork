@@ -12,6 +12,8 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.wm.impl.IdeFrame;
 import com.intellij.openapi.wm.impl.StripeButton;
 import com.intellij.openapi.ui.Messages;
+import com.intellij.openapi.editor.impl.EditorComponentImpl;
+import com.intellij.openapi.editor.actionSystem.EditorAction;
 import com.intellij.util.Alarm;
 
 import javax.swing.*;
@@ -91,20 +93,25 @@ public class KeyPromoter implements ApplicationComponent, AWTEventListener {
         if (event.getKeyCode() == KeyEvent.VK_CONTROL || event.getKeyCode() == KeyEvent.VK_ALT) {
             String[] actionIds = KeymapManager.getInstance().getActiveKeymap().getActionIds();
             ActionManager actionManager = ActionManager.getInstance();
+            DataContext dataContext = new DataContext() {
+                @Nullable
+                public Object getData(String dataId) {
+                    return null;  //To change body of implemented methods use File | Settings | File Templates.
+                }
+            };
+            if (e.getSource() instanceof EditorComponentImpl) {
+                dataContext = ((EditorComponentImpl)e.getSource()).getEditor().getDataContext();
+            }
             for (int i = 0; i < actionIds.length; i++) {
                 String actionId = actionIds[i];
                 AnAction action = actionManager.getAction(actionId);
                 if (action != null && action.getShortcutSet() != null) {
                     String shortcutText = KeymapUtil.getFirstKeyboardShortcutText(action);
+                    shortcutText  = shortcutText.toLowerCase().replace("ctrl", "control");
                     if (("pressed "+ shortcutText).toLowerCase().startsWith(KeyStroke.getKeyStroke(event.getKeyCode(), 0).toString().toLowerCase())) {
-                        action.update(new AnActionEvent((InputEvent) e, new DataContext() {
-                                @Nullable
-                                public Object getData(String dataId) {
-                                    return null;  //To change body of implemented methods use File | Settings | File Templates.
-                                }
-                            },"", action.getTemplatePresentation(),actionManager, event.getModifiers()));
+                        action.update(new AnActionEvent((InputEvent) e, dataContext,"", action.getTemplatePresentation(),actionManager, event.getModifiers()));
                         if (action.getTemplatePresentation().isEnabled()) {
-                            System.out.println(shortcutText + " " + action.getTemplatePresentation().getText());
+                            System.out.println(((action instanceof EditorAction) ? "(editor) ":"") + shortcutText + " " + action.getTemplatePresentation().getText());
                         }
                     }
                 }
