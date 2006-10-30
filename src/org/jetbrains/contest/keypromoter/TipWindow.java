@@ -8,8 +8,8 @@ import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
 
 /**
- * Date: 05.10.2006
- * Time: 15:25:47
+ * Popup window with information about missed shortcut. Contains shortcut keys and number of invocations by mouse.
+ * @author Dmitry Kashin
  */
 public class TipWindow extends JWindow {
 
@@ -38,6 +38,10 @@ public class TipWindow extends JWindow {
         }
 
     }
+
+    /**
+     * Component for displaying tip with some simple animation.
+     */
     class TipLabel extends JLabel {
         private float myAlphaValue;
         private static final float ALPHA_STEP = 0.1f;

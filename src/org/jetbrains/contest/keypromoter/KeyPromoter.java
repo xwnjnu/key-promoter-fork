@@ -48,9 +48,8 @@ public class KeyPromoter implements ApplicationComponent, AWTEventListener {
     private Map<String, Integer> stats = Collections.synchronizedMap(new HashMap<String, Integer>());
     private Map<String, Integer> withoutShortcutStats = Collections.synchronizedMap(new HashMap<String, Integer>());
 
-
     public void initComponent() {
-        Toolkit.getDefaultToolkit().addAWTEventListener(this, AWTEvent.MOUSE_EVENT_MASK | AWTEvent.WINDOW_EVENT_MASK | AWTEvent.WINDOW_STATE_EVENT_MASK | AWTEvent.KEY_EVENT_MASK);
+        Toolkit.getDefaultToolkit().addAWTEventListener(this, AWTEvent.MOUSE_EVENT_MASK | AWTEvent.WINDOW_EVENT_MASK | AWTEvent.WINDOW_STATE_EVENT_MASK/* | AWTEvent.KEY_EVENT_MASK*/);
         KeyPromoterConfiguration component = ApplicationManager.getApplication().getComponent(KeyPromoterConfiguration.class);
         mySettings = component.getSettings();
         // HACK !!!
@@ -83,11 +82,12 @@ public class KeyPromoter implements ApplicationComponent, AWTEventListener {
             handleWindowEvent(e);
 
         } else if (e.getID() == KeyEvent.KEY_PRESSED) {
-            handleKeyboardEvent(e);
+//            handleKeyboardEvent(e);
 
         }
     }
 
+/*
     private void handleKeyboardEvent(AWTEvent e) {
         KeyEvent event = (KeyEvent) e;
         if (event.getKeyCode() == KeyEvent.VK_CONTROL || event.getKeyCode() == KeyEvent.VK_ALT) {
@@ -122,6 +122,7 @@ public class KeyPromoter implements ApplicationComponent, AWTEventListener {
             System.out.println("bu");
         }
     }
+*/
 
     private void handleWindowEvent(AWTEvent e) {
         // To paint tip over dialogs
@@ -195,9 +196,13 @@ public class KeyPromoter implements ApplicationComponent, AWTEventListener {
                         withoutShortcutStats.put(id, 0);
                     }
                     withoutShortcutStats.put(id, withoutShortcutStats.get(id) + 1);
-                    if (withoutShortcutStats.get(id) % 3 == 0) {
-                        if (Messages.showYesNoDialog(frame, "Would you like to assign shortcut to '" + anAction.getTemplatePresentation().getDescription() + "'action cause we noticed it was used " + withoutShortcutStats.get(id) + " time(s) by mouse?",
-                                "Keyboard usage more productive!", Messages.getQuestionIcon()) == 0) {
+                    if (mySettings.getProposeToCreateShortcutCount() > 0 && withoutShortcutStats.get(id) % mySettings.getProposeToCreateShortcutCount() == 0) {
+                        String actionLabel = anAction.getTemplatePresentation().getDescription();
+                        if (StringUtil.isEmpty(actionLabel)) {
+                            actionLabel = anAction.getTemplatePresentation().getText();
+                        }
+                        if (Messages.showYesNoDialog(frame, "Would you like to assign shortcut to '" + actionLabel + "' action cause we noticed it was used " + withoutShortcutStats.get(id) + " time(s) by mouse?",
+                                "[KeyPromoter said]: Keyboard usage more productive!", Messages.getQuestionIcon()) == 0) {
                             EditKeymapsDialog dialog = new EditKeymapsDialog(((IdeFrame) frame).getProject(), id);
                             dialog.show();
                         }

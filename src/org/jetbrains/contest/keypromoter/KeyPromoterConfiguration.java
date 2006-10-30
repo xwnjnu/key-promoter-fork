@@ -17,8 +17,8 @@ import org.jdom.Element;
 
 
 /**
- * Date: 07.09.2006
- * Time: 11:19:46
+ * Configuration of plugin saving and editing.
+ * @author Dmitry Kashin
  */
 public class KeyPromoterConfiguration implements Configurable, ApplicationComponent, JDOMExternalizable  {
 
@@ -34,10 +34,10 @@ public class KeyPromoterConfiguration implements Configurable, ApplicationCompon
     private ColorPanel myTextColor;
     private ColorPanel myBackgroundColor;
     private ColorPanel myBorderColor;
-    private JSpinner myFontSize;
+    private JSpinner myProposeToCreateShortcutCount;
+    private JTextPane myPopupTemplate;
 
     private KeyPromoterSettings mySettings = new KeyPromoterSettings();
-    private JCheckBox checkBox1;
 
     public String getDisplayName() {
         return "KeyPromoter";
@@ -67,7 +67,8 @@ public class KeyPromoterConfiguration implements Configurable, ApplicationCompon
         if (myBorderColor.getSelectedColor() != mySettings.getBorderColor()) return true;
         if (!myDisplayTime.getValue().equals(mySettings.getDisplayTime())) return true;
         if (!myAnimationDelay.getValue().equals(mySettings.getFlashAnimationDelay())) return true;
-        if (!myFontSize.getValue().equals(mySettings.getFontSize())) return true;
+        if (!myProposeToCreateShortcutCount.getValue().equals(mySettings.getProposeToCreateShortcutCount())) return true;
+        if (!myPopupTemplate.getText().equals(mySettings.getPopupTemplate())) return true;
         if (myFixedTipPosition.isSelected() != mySettings.isFixedTipPosistion()) return true;
         return false;
     }
@@ -82,7 +83,8 @@ public class KeyPromoterConfiguration implements Configurable, ApplicationCompon
         mySettings.setBorderColor(myBorderColor.getSelectedColor());
         mySettings.setDisplayTime(new Integer(myDisplayTime.getValue().toString()));
         mySettings.setFlashAnimationDelay(new Integer(myAnimationDelay.getValue().toString()));
-        mySettings.setFontSize(new Integer(myFontSize.getValue().toString()));
+        mySettings.setProposeToCreateShortcutCount(new Integer(myProposeToCreateShortcutCount.getValue().toString()));
+        mySettings.setPopupTemplate(myPopupTemplate.getText());
         mySettings.setFixedTipPosistion(myFixedTipPosition.isSelected());
     }
 
@@ -96,7 +98,8 @@ public class KeyPromoterConfiguration implements Configurable, ApplicationCompon
         myBorderColor.setSelectedColor(mySettings.getBorderColor());
         myDisplayTime.setValue(mySettings.getDisplayTime());
         myAnimationDelay.setValue(mySettings.getFlashAnimationDelay());
-        myFontSize.setValue(mySettings.getFontSize());
+        myProposeToCreateShortcutCount.setValue(mySettings.getProposeToCreateShortcutCount());
+        myPopupTemplate.setText(mySettings.getPopupTemplate());
         myFixedTipPosition.setSelected(mySettings.isFixedTipPosistion());
     }
 

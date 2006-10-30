@@ -3,60 +3,48 @@ package org.jetbrains.contest.keypromoter;
 import java.awt.*;
 
 /**
- * Date: 11.09.2006
- * Time: 16:14:06
+ * Settings for KeyPromoter plugin.
+ * @author Dmitry Kashin
  */
 public class KeyPromoterSettings {
 
+    /** Color of text in popup */
     public Color textColor = Color.BLACK;
+    /** Color of border of popup */
     public Color borderColor = Color.RED;
+    /** Background Color of popup */
     public Color backgroundColor = new Color(0x202040);
 
+    /** Whether popup enabled or disabled on menus clicks. */
     public boolean menusEnabled = true;
+    /** Whether popup enabled or disabled on toolbar buttons clicks. */
     public boolean toolbarButtonsEnabled = true;
+    /** Whether popup enabled or disabled on toolwindow buttons clicks. */
     public boolean toolWindowButtonsEnabled = true;
+    /** Whether popup enabled or disabled on all buttons with mnemonics clicks. */
     public boolean allButtonsEnabled = false;
 
+    /** Time of popup display. */
     public long displayTime = 3000;
+    /** Animation delay time. */
     public long flashAnimationDelay = 150;
-    public long fontSize = 40;
+    /** Count of invocations after which ask for creation of shortcut for actions without them. */
+    public int proposeToCreateShortcutCount = 3;
+    /** Popup position fixed or folow the mouse clicks. */
     public boolean fixedTipPosistion = false;
-
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        final KeyPromoterSettings that = (KeyPromoterSettings) o;
-
-        if (allButtonsEnabled != that.allButtonsEnabled) return false;
-        if (displayTime != that.displayTime) return false;
-        if (fontSize != that.fontSize) return false;
-        if (flashAnimationDelay != that.flashAnimationDelay) return false;
-        if (fixedTipPosistion != that.fixedTipPosistion) return false;
-        if (menusEnabled != that.menusEnabled) return false;
-        if (toolWindowButtonsEnabled != that.toolWindowButtonsEnabled) return false;
-        if (toolbarButtonsEnabled != that.toolbarButtonsEnabled) return false;
-        if (!backgroundColor.equals(that.backgroundColor)) return false;
-        if (!borderColor.equals(that.borderColor)) return false;
-        if (!textColor.equals(that.textColor)) return false;
-
-        return true;
-    }
-
-    public int hashCode() {
-        int result;
-        result = (int) (displayTime ^ (displayTime >>> 32));
-        result = 29 * result + (int) (flashAnimationDelay ^ (flashAnimationDelay >>> 32));
-        result = 29 * result + (int) (fontSize ^ (fontSize >>> 32));
-        result = 29 * result + (menusEnabled ? 1 : 0);
-        result = 29 * result + (toolbarButtonsEnabled ? 1 : 0);
-        result = 29 * result + (toolWindowButtonsEnabled ? 1 : 0);
-        result = 29 * result + (allButtonsEnabled ? 1 : 0);
-        result = 29 * result + textColor.hashCode();
-        result = 29 * result + borderColor.hashCode();
-        result = 29 * result + backgroundColor.hashCode();
-        return result;
-    }
+    /** Popup template. */
+    public String popupTemplate = "<html>\n" +
+            " <body>\n" +
+            "  <table>\n" +
+            "   <tr>\n" +
+            "    <td align=\"center\"><font size=8>{0}</font></td>\n" +
+            "   </tr>\n" +
+            "   <tr>\n" +
+            "    <td align=\"center\"><font size=6>{1} time(s)</font></td>\n" +
+            "   </tr>\n" +
+            "  </table>\n" +
+            " </body>\n" +
+            "</html>";
 
     public long getDisplayTime() {
         return displayTime;
@@ -130,19 +118,69 @@ public class KeyPromoterSettings {
         this.backgroundColor = backgroundColor;
     }
 
-    public long getFontSize() {
-        return fontSize;
-    }
-
-    public void setFontSize(long fontSize) {
-        this.fontSize = fontSize;
-    }
-
     public boolean isFixedTipPosistion() {
         return this.fixedTipPosistion;
     }
 
     public void setFixedTipPosistion(boolean fixedTipPosistion) {
         this.fixedTipPosistion = fixedTipPosistion;
+    }
+
+    public int getProposeToCreateShortcutCount() {
+        return proposeToCreateShortcutCount;
+    }
+
+    public void setProposeToCreateShortcutCount(int proposeToCreateShortcutCount) {
+        this.proposeToCreateShortcutCount = proposeToCreateShortcutCount;
+    }
+
+    public String getPopupTemplate() {
+        return popupTemplate;
+    }
+
+    public void setPopupTemplate(String popupTemplate) {
+        this.popupTemplate = popupTemplate;
+    }
+
+
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        KeyPromoterSettings that = (KeyPromoterSettings) o;
+
+        if (allButtonsEnabled != that.allButtonsEnabled) return false;
+        if (displayTime != that.displayTime) return false;
+        if (fixedTipPosistion != that.fixedTipPosistion) return false;
+        if (flashAnimationDelay != that.flashAnimationDelay) return false;
+        if (menusEnabled != that.menusEnabled) return false;
+        if (proposeToCreateShortcutCount != that.proposeToCreateShortcutCount) return false;
+        if (toolWindowButtonsEnabled != that.toolWindowButtonsEnabled) return false;
+        if (toolbarButtonsEnabled != that.toolbarButtonsEnabled) return false;
+        if (backgroundColor != null ? !backgroundColor.equals(that.backgroundColor) : that.backgroundColor != null)
+            return false;
+        if (borderColor != null ? !borderColor.equals(that.borderColor) : that.borderColor != null) return false;
+        if (popupTemplate != null ? !popupTemplate.equals(that.popupTemplate) : that.popupTemplate != null)
+            return false;
+        if (textColor != null ? !textColor.equals(that.textColor) : that.textColor != null) return false;
+
+        return true;
+    }
+
+    public int hashCode() {
+        int result;
+        result = (textColor != null ? textColor.hashCode() : 0);
+        result = 31 * result + (borderColor != null ? borderColor.hashCode() : 0);
+        result = 31 * result + (backgroundColor != null ? backgroundColor.hashCode() : 0);
+        result = 31 * result + (menusEnabled ? 1 : 0);
+        result = 31 * result + (toolbarButtonsEnabled ? 1 : 0);
+        result = 31 * result + (toolWindowButtonsEnabled ? 1 : 0);
+        result = 31 * result + (allButtonsEnabled ? 1 : 0);
+        result = 31 * result + (int) (displayTime ^ (displayTime >>> 32));
+        result = 31 * result + (int) (flashAnimationDelay ^ (flashAnimationDelay >>> 32));
+        result = 31 * result + proposeToCreateShortcutCount;
+        result = 31 * result + (fixedTipPosistion ? 1 : 0);
+        result = 31 * result + (popupTemplate != null ? popupTemplate.hashCode() : 0);
+        return result;
     }
 }
