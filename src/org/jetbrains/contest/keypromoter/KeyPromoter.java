@@ -75,7 +75,7 @@ public class KeyPromoter implements ApplicationComponent, AWTEventListener {
 
     // AWT magic
     public void eventDispatched(AWTEvent e) {
-        if (e.getID() == MouseEvent.MOUSE_RELEASED && ((MouseEvent)e).getButton() == MouseEvent.BUTTON1) {
+        if (e.getID() == MouseEvent.MOUSE_RELEASED && ((MouseEvent) e).getButton() == MouseEvent.BUTTON1) {
             handleMouseEvent(e);
 
         } else if (e.getID() == WindowEvent.WINDOW_ACTIVATED | e.getID() == Event.WINDOW_MOVED) {
@@ -176,8 +176,10 @@ public class KeyPromoter implements ApplicationComponent, AWTEventListener {
         Object source = e.getSource();
         // Get current frame, not sure that it respects API
         JFrame frame = getFrame(source);
+        if (frame == null) {
+            return;
+        }
         if (!StringUtil.isEmpty(shortcutText)) {
-            if (frame != null) {
                 if (stats.get(shortcutText) == null) {
                     stats.put(shortcutText, 0);
                 }
@@ -186,7 +188,6 @@ public class KeyPromoter implements ApplicationComponent, AWTEventListener {
                 // Write shortcut to the brain card
 
                 showTip(frame, e, KeyPromoterUtils.renderMessage(description, shortcutText, stats.get(shortcutText)));
-            }
         } else {
             // Suggest to assign shortcut ot action without shortcut or record such action invocation
             if (anAction != null) {
@@ -235,7 +236,7 @@ public class KeyPromoter implements ApplicationComponent, AWTEventListener {
 
         // Repainting with specified delay and steps count
         final int stepDuration1 = stepDuration;
-        myAlarm.addRequest(new Runnable(){
+        myAlarm.addRequest(new Runnable() {
 
             public void run() {
                 myTipWindow.repaint();
