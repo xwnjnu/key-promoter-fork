@@ -2,9 +2,13 @@
 <idea-plugin>
   <name>Key promoter</name>
   <description>Shows to user how easy he can make same action using only keyboard(menus and toolbar button mouse clicks initiates shortcut display)</description>
-  <version>1.0.4</version>
+  <version>1.0.5</version>
   <vendor email="kashin_d@hotmail.ru">Dmitry Kashin</vendor>
         <change-notes><![CDATA[<ul>
+        <li> 1.0.5 </li>
+        <ul>
+          <li> Selena (since 6767) compatible version. </li>
+        </ul>
         <li> 1.0.4 </li>
         <ul>
           <li> NPE fixed. </li>
@@ -51,7 +55,7 @@
         </ul>
     </ul>]]>
   </change-notes>
-  <idea-version since-build="3000"/>
+  <idea-version since-build="6767"/>
     <application-components>
         <component>
             <implementation-class>org.jetbrains.contest.keypromoter.KeyPromoter</implementation-class>

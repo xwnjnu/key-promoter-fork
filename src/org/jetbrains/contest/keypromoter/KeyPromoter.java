@@ -9,8 +9,8 @@ import com.intellij.openapi.keymap.KeymapUtil;
 import com.intellij.openapi.keymap.KeymapManager;
 import com.intellij.openapi.keymap.impl.ui.EditKeymapsDialog;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.wm.impl.IdeFrame;
 import com.intellij.openapi.wm.impl.StripeButton;
+import com.intellij.openapi.wm.impl.IdeFrameImpl;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.editor.impl.EditorComponentImpl;
 import com.intellij.openapi.editor.actionSystem.EditorAction;
@@ -204,7 +204,7 @@ public class KeyPromoter implements ApplicationComponent, AWTEventListener {
                         }
                         if (Messages.showYesNoDialog(frame, "Would you like to assign shortcut to '" + actionLabel + "' action cause we noticed it was used " + withoutShortcutStats.get(id) + " time(s) by mouse?",
                                 "[KeyPromoter said]: Keyboard usage more productive!", Messages.getQuestionIcon()) == 0) {
-                            EditKeymapsDialog dialog = new EditKeymapsDialog(((IdeFrame) frame).getProject(), id);
+                            EditKeymapsDialog dialog = new EditKeymapsDialog(((IdeFrameImpl) frame).getProject(), id);
                             dialog.show();
                         }
                     }
