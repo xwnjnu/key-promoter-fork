@@ -3,28 +3,27 @@ package org.jetbrains.contest.keypromoter;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.actionSystem.impl.ActionButton;
 import com.intellij.openapi.actionSystem.impl.ActionMenuItem;
+import com.intellij.openapi.actionSystem.impl.actionholder.ActionRef;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.keymap.KeymapUtil;
-import com.intellij.openapi.keymap.KeymapManager;
 import com.intellij.openapi.keymap.impl.ui.EditKeymapsDialog;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.wm.impl.StripeButton;
-import com.intellij.openapi.wm.impl.IdeFrameImpl;
 import com.intellij.openapi.ui.Messages;
-import com.intellij.openapi.editor.impl.EditorComponentImpl;
-import com.intellij.openapi.editor.actionSystem.EditorAction;
+import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.wm.impl.IdeFrameImpl;
+import com.intellij.openapi.wm.impl.StripeButton;
 import com.intellij.util.Alarm;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.AWTEventListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.WindowEvent;
 import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.jetbrains.annotations.Nullable;
 
 /**
  * Date: 04.09.2006
@@ -34,8 +33,7 @@ public class KeyPromoter implements ApplicationComponent, AWTEventListener {
 
     // Fields with actions of supported classes
     private Map<Class, Field> myClassFields = new HashMap<Class, Field>(5);
-    // Supported classes which contains actions in fields
-    private Class[] mySupportedClasses = new Class[]{ActionMenuItem.class, ActionButton.class};
+
     // DataContext field to get frame on Mac for example
     private Field myMenuItemDataContextField;
     private KeyPromoterSettings mySettings;
@@ -52,15 +50,7 @@ public class KeyPromoter implements ApplicationComponent, AWTEventListener {
         Toolkit.getDefaultToolkit().addAWTEventListener(this, AWTEvent.MOUSE_EVENT_MASK | AWTEvent.WINDOW_EVENT_MASK | AWTEvent.WINDOW_STATE_EVENT_MASK/* | AWTEvent.KEY_EVENT_MASK*/);
         KeyPromoterConfiguration component = ApplicationManager.getApplication().getComponent(KeyPromoterConfiguration.class);
         mySettings = component.getSettings();
-        // HACK !!!
-        // Some reflection used to get actions from mouse event sources
-        for (int i = 0; i < mySupportedClasses.length; i++) {
-            Class mySupportedClass = mySupportedClasses[i];
-            Field actionField = KeyPromoterUtils.getFieldOfType(mySupportedClass, AnAction.class);
-            if (actionField != null) {
-                myClassFields.put(mySupportedClass, actionField);
-            }
-        }
+
         // DataContext field to get frame on Mac for example
         myMenuItemDataContextField = KeyPromoterUtils.getFieldOfType(ActionMenuItem.class, DataContext.class);
     }
@@ -69,6 +59,7 @@ public class KeyPromoter implements ApplicationComponent, AWTEventListener {
         Toolkit.getDefaultToolkit().removeAWTEventListener(this);
     }
 
+    @NotNull
     public String getComponentName() {
         return "KeyPromoter";
     }
@@ -80,49 +71,8 @@ public class KeyPromoter implements ApplicationComponent, AWTEventListener {
 
         } else if (e.getID() == WindowEvent.WINDOW_ACTIVATED | e.getID() == Event.WINDOW_MOVED) {
             handleWindowEvent(e);
-
-        } else if (e.getID() == KeyEvent.KEY_PRESSED) {
-//            handleKeyboardEvent(e);
-
         }
     }
-
-/*
-    private void handleKeyboardEvent(AWTEvent e) {
-        KeyEvent event = (KeyEvent) e;
-        if (event.getKeyCode() == KeyEvent.VK_CONTROL || event.getKeyCode() == KeyEvent.VK_ALT) {
-            String[] actionIds = KeymapManager.getInstance().getActiveKeymap().getActionIds();
-            ActionManager actionManager = ActionManager.getInstance();
-            DataContext dataContext = new DataContext() {
-                @Nullable
-                public Object getData(String dataId) {
-                    return null;  //To change body of implemented methods use File | Settings | File Templates.
-                }
-            };
-            if (e.getSource() instanceof EditorComponentImpl) {
-                dataContext = ((EditorComponentImpl)e.getSource()).getEditor().getDataContext();
-            }
-            for (int i = 0; i < actionIds.length; i++) {
-                String actionId = actionIds[i];
-                AnAction action = actionManager.getAction(actionId);
-                if (action != null && action.getShortcutSet() != null) {
-                    String shortcutText = KeymapUtil.getFirstKeyboardShortcutText(action);
-                    shortcutText  = shortcutText.toLowerCase().replace("ctrl", "control");
-                    if (("pressed "+ shortcutText).toLowerCase().startsWith(KeyStroke.getKeyStroke(event.getKeyCode(), 0).toString().toLowerCase())) {
-                        action.update(new AnActionEvent((InputEvent) e, dataContext,"", action.getTemplatePresentation(),actionManager, event.getModifiers()));
-                        if (action.getTemplatePresentation().isEnabled()) {
-                            System.out.println(((action instanceof EditorAction) ? "(editor) ":"") + shortcutText + " " + action.getTemplatePresentation().getText());
-                        }
-                    }
-                }
-            }
-
-        }
-        if ((event.getModifiers() & KeyEvent.CTRL_DOWN_MASK) == KeyEvent.CTRL_DOWN_MASK) {
-            System.out.println("bu");
-        }
-    }
-*/
 
     private void handleWindowEvent(AWTEvent e) {
         // To paint tip over dialogs
@@ -138,13 +88,25 @@ public class KeyPromoter implements ApplicationComponent, AWTEventListener {
         String shortcutText = "";
         String description = "";
 
-        // Handle only menu and tool buttons clicks
         AnAction anAction = null;
-        if (myClassFields.keySet().contains(source.getClass())) {
+        Field field;
+        if (!myClassFields.containsKey(source.getClass())) {
+            field = KeyPromoterUtils.getFieldOfType(source.getClass(), AnAction.class);
+            myClassFields.put(source.getClass(), field);
+        } else {
+            field = myClassFields.get(source.getClass());
+        }
+
+        if (field != null) {
             try {
                 if ((mySettings.isMenusEnabled() && source instanceof ActionMenuItem) ||
                         (mySettings.isToolbarButtonsEnabled() && source instanceof ActionButton)) {
-                    anAction = (AnAction) myClassFields.get(source.getClass()).get(source);
+                    Object actionItem = field.get(source);
+                    if (actionItem instanceof AnAction) {
+                        anAction = (AnAction) actionItem;
+                    } else if (actionItem instanceof ActionRef) {
+                        anAction = ((ActionRef) actionItem).getAction();
+                    }
                 }
             } catch (IllegalAccessException e1) {
                 // it is bad but ...
@@ -259,7 +221,7 @@ public class KeyPromoter implements ApplicationComponent, AWTEventListener {
                 try {
                     DataContext dataContext = (DataContext) myMenuItemDataContextField.get(source);
                     if (dataContext != null) {
-                        Component component = (Component) dataContext.getData(DataConstants.CONTEXT_COMPONENT);
+                        Component component = (Component) dataContext.getData(PlatformDataKeys.CONTEXT_COMPONENT.getName());
                         frame = (JFrame) SwingUtilities.getAncestorOfClass(JFrame.class, component);
                     }
                 } catch (Exception e1) {

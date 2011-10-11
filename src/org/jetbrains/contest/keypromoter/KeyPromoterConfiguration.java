@@ -1,23 +1,21 @@
 package org.jetbrains.contest.keypromoter;
 
-import com.intellij.openapi.options.Configurable;
+import com.intellij.openapi.components.PersistentStateComponent;
+import com.intellij.openapi.components.State;
+import com.intellij.openapi.components.Storage;
+import com.intellij.openapi.options.BaseConfigurable;
 import com.intellij.openapi.options.ConfigurationException;
-import com.intellij.openapi.components.ApplicationComponent;
-import com.intellij.openapi.util.JDOMExternalizable;
-import com.intellij.openapi.util.InvalidDataException;
-import com.intellij.openapi.util.WriteExternalException;
-import com.intellij.openapi.util.DefaultJDOMExternalizer;
+import com.intellij.openapi.options.SearchableConfigurable;
 import com.intellij.ui.ColorPanel;
-import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.GridConstraints;
+import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
+import com.intellij.util.xmlb.XmlSerializerUtil;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.NonNls;
-import org.jdom.Element;
-
 import java.awt.*;
 
 
@@ -26,13 +24,21 @@ import java.awt.*;
  *
  * @author Dmitry Kashin
  */
-public class KeyPromoterConfiguration implements Configurable, ApplicationComponent, JDOMExternalizable {
+@State(
+  name = "KeyPromoterConfiguration",
+  storages = {
+    @Storage(
+      file = "$APP_CONFIG$/KeyPromoter.xml",
+      id = "KeyPromoterConfiguration"
+    )}
+)
+public class KeyPromoterConfiguration extends BaseConfigurable implements SearchableConfigurable, PersistentStateComponent<KeyPromoterConfiguration> {
 
     JPanel myConfigPanel;
     private JSpinner myDisplayTime;
     private JCheckBox myAllButtons;
     private JCheckBox myToolWindowButtons;
-    private JCheckBox myToobarButtons;
+    private JCheckBox myToolbarButtons;
     private JCheckBox myMenus;
     private JCheckBox myFixedTipPosition;
 
@@ -44,6 +50,16 @@ public class KeyPromoterConfiguration implements Configurable, ApplicationCompon
     private JTextPane myPopupTemplate;
 
     private KeyPromoterSettings mySettings = new KeyPromoterSettings();
+
+
+    @NotNull
+    public String getId() {
+        return "KeyPromoterConfiguration";
+    }
+
+    public Runnable enableSearch(String s) {
+        return null;
+    }
 
     public String getDisplayName() {
         return "KeyPromoter";
@@ -65,7 +81,7 @@ public class KeyPromoterConfiguration implements Configurable, ApplicationCompon
 
     public boolean isModified() {
         if (myMenus.isSelected() != mySettings.isMenusEnabled()) return true;
-        if (myToobarButtons.isSelected() != mySettings.isToolbarButtonsEnabled()) return true;
+        if (myToolbarButtons.isSelected() != mySettings.isToolbarButtonsEnabled()) return true;
         if (myToolWindowButtons.isSelected() != mySettings.isToolWindowButtonsEnabled()) return true;
         if (myAllButtons.isSelected() != mySettings.isAllButtonsEnabled()) return true;
         if (myTextColor.getSelectedColor() != mySettings.getTextColor()) return true;
@@ -82,7 +98,7 @@ public class KeyPromoterConfiguration implements Configurable, ApplicationCompon
 
     public void apply() throws ConfigurationException {
         mySettings.setMenusEnabled(myMenus.isSelected());
-        mySettings.setToolbarButtonsEnabled(myToobarButtons.isSelected());
+        mySettings.setToolbarButtonsEnabled(myToolbarButtons.isSelected());
         mySettings.setToolWindowButtonsEnabled(myToolWindowButtons.isSelected());
         mySettings.setAllButtonsEnabled(myAllButtons.isSelected());
         mySettings.setTextColor(myTextColor.getSelectedColor());
@@ -97,7 +113,7 @@ public class KeyPromoterConfiguration implements Configurable, ApplicationCompon
 
     public void reset() {
         myMenus.setSelected(mySettings.isMenusEnabled());
-        myToobarButtons.setSelected(mySettings.isToolbarButtonsEnabled());
+        myToolbarButtons.setSelected(mySettings.isToolbarButtonsEnabled());
         myToolWindowButtons.setSelected(mySettings.isToolWindowButtonsEnabled());
         myAllButtons.setSelected(mySettings.isAllButtonsEnabled());
         myTextColor.setSelectedColor(mySettings.getTextColor());
@@ -113,27 +129,16 @@ public class KeyPromoterConfiguration implements Configurable, ApplicationCompon
     public void disposeUIResources() {
     }
 
-    @NonNls
-    public String getComponentName() {
-        return "KeyPromoter.Config";
-    }
-
-    public void initComponent() {
-    }
-
-    public void disposeComponent() {
-    }
-
     public KeyPromoterSettings getSettings() {
         return mySettings;
     }
 
-    public void readExternal(Element element) throws InvalidDataException {
-        DefaultJDOMExternalizer.readExternal(mySettings, element);
+    public KeyPromoterConfiguration getState() {
+        return this;
     }
 
-    public void writeExternal(Element element) throws WriteExternalException {
-        DefaultJDOMExternalizer.writeExternal(mySettings, element);
+    public void loadState(KeyPromoterConfiguration state) {
+        XmlSerializerUtil.copyBean(state, this);
     }
 
     {
@@ -229,11 +234,11 @@ public class KeyPromoterConfiguration implements Configurable, ApplicationCompon
         myMenus.setMnemonic('M');
         myMenus.setDisplayedMnemonicIndex(0);
         panel7.add(myMenus, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        myToobarButtons = new JCheckBox();
-        myToobarButtons.setText("Toolbar buttons");
-        myToobarButtons.setMnemonic('T');
-        myToobarButtons.setDisplayedMnemonicIndex(0);
-        panel7.add(myToobarButtons, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        myToolbarButtons = new JCheckBox();
+        myToolbarButtons.setText("Toolbar buttons");
+        myToolbarButtons.setMnemonic('T');
+        myToolbarButtons.setDisplayedMnemonicIndex(0);
+        panel7.add(myToolbarButtons, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         myToolWindowButtons = new JCheckBox();
         myToolWindowButtons.setText("Tool window buttons");
         myToolWindowButtons.setMnemonic('W');

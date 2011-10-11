@@ -1,8 +1,7 @@
 package org.jetbrains.contest.keypromoter;
 
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.util.text.StringUtil;
 
 import java.lang.reflect.Field;
 import java.text.MessageFormat;
@@ -19,21 +18,22 @@ public class KeyPromoterUtils {
      * @return
      */
     public static Field getFieldOfType(Class<?> aClass, Class<?> targetClass) {
-        Field[] declaredFields = aClass.getDeclaredFields();
-        for (int i = 0; i < declaredFields.length; i++) {
-            Field declaredField = declaredFields[i];
-            if (declaredField.getType().equals(targetClass)) {
-                declaredField.setAccessible(true);
-                return declaredField;
+        do {
+            Field[] declaredFields = aClass.getDeclaredFields();
+            for (Field declaredField : declaredFields) {
+                if (declaredField.getType().equals(targetClass)) {
+                    declaredField.setAccessible(true);
+                    return declaredField;
+                }
             }
-        }
+        } while ((aClass = aClass.getSuperclass()) != null);
         return null;
     }
 
     /**
      * Creates popup message body from template.
      * @param description action description
-     * @param shortcutText key combinamtion
+     * @param shortcutText key combination
      * @param count number of counted invocations
      * @return
      */
