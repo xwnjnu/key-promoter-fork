@@ -17,7 +17,7 @@ public class TipWindow extends JWindow {
         super(owner);
         KeyPromoterConfiguration component = ApplicationManager.getApplication().getComponent(KeyPromoterConfiguration.class);
         KeyPromoterSettings mySettings = component.getSettings();
-
+        setAlwaysOnTop(true);
         JPanel contentPane = new JPanel(new BorderLayout());
         contentPane.setOpaque(false);
         setContentPane(contentPane);
@@ -26,14 +26,14 @@ public class TipWindow extends JWindow {
         pack();
         // If fixed posistion show at the bottom of screen, if not show close to the mouse click position
         if (mySettings.isFixedTipPosistion()) {
-            setLocation((int) (owner.getWidth() - myTip.getSize().getWidth()) / 2,
-                    (int) (owner.getHeight() - myTip.getSize().getHeight() - 100));
+            setLocation(owner.getX() + (int) (owner.getWidth() - myTip.getSize().getWidth()) / 2,
+                    owner.getY() + (int) (owner.getHeight() - myTip.getSize().getHeight() - 100));
         } else {
             // Trying fit to screen
             Point locationPoint = SwingUtilities.convertPoint(sourceComponent,
                     new Point(sourceComponent.getWidth() + 2, sourceComponent.getHeight() + 2), owner);
-            locationPoint.x = (int) Math.min(locationPoint.getX(), owner.getWidth() - myTip.getSize().getWidth());
-            locationPoint.y = (int) Math.min(locationPoint.getY(), owner.getHeight() - myTip.getSize().getHeight());
+            locationPoint.x = owner.getX() + (int) Math.min(locationPoint.getX(), owner.getWidth() - myTip.getSize().getWidth());
+            locationPoint.y = owner.getY() + (int) Math.min(locationPoint.getY(), owner.getHeight() - myTip.getSize().getHeight());
             setLocation(locationPoint);
         }
 
