@@ -6,7 +6,6 @@ import com.intellij.openapi.actionSystem.impl.ActionMenuItem;
 import com.intellij.openapi.actionSystem.impl.actionholder.ActionRef;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ApplicationComponent;
-import com.intellij.openapi.keymap.KeymapUtil;
 import com.intellij.openapi.keymap.impl.ui.EditKeymapsDialog;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.text.StringUtil;
@@ -89,15 +88,33 @@ public class KeyPromoter implements ApplicationComponent, AWTEventListener {
         String description = "";
 
         AnAction anAction = null;
-        Field field;
-        if (!myClassFields.containsKey(source.getClass())) {
-            field = KeyPromoterUtils.getFieldOfType(source.getClass(), AnAction.class);
-            myClassFields.put(source.getClass(), field);
-        } else {
-            field = myClassFields.get(source.getClass());
-        }
 
-        if (field != null) {
+
+        if (mySettings.isToolWindowButtonsEnabled() && source instanceof StripeButton) {
+            // This is hack!!!
+            char mnemonic = ((char) ((StripeButton) source).getMnemonic2());
+            if (mnemonic >= '0' && mnemonic <= '9') {
+                shortcutText = "Alt+" + mnemonic;
+                description = ((StripeButton) source).getText();
+            }
+        } else if (mySettings.isAllButtonsEnabled() && source instanceof JButton) {
+            char mnemonic = ((char) ((JButton) source).getMnemonic());
+            if (mnemonic > 0) {
+                // Not respecting Mac Meta key yet
+                shortcutText = "Alt+" + mnemonic;
+                description = ((JButton) source).getText();
+            }
+        } else {
+            Field field;
+            if (!myClassFields.containsKey(source.getClass())) {
+                field = KeyPromoterUtils.getFieldOfType(source.getClass(), AnAction.class);
+                if (field == null) {
+                    field = KeyPromoterUtils.getFieldOfType(source.getClass(), ActionRef.class);
+                }
+                myClassFields.put(source.getClass(), field);
+            } else {
+                field = myClassFields.get(source.getClass());
+            }
             try {
                 if ((mySettings.isMenusEnabled() && source instanceof ActionMenuItem) ||
                         (mySettings.isToolbarButtonsEnabled() && source instanceof ActionButton)) {
@@ -111,25 +128,9 @@ public class KeyPromoter implements ApplicationComponent, AWTEventListener {
             } catch (IllegalAccessException e1) {
                 // it is bad but ...
             }
-            if (anAction != null) {
-                shortcutText = KeymapUtil.getFirstKeyboardShortcutText(anAction);
+            if (anAction != null && anAction.getShortcutSet() != null) {
+                shortcutText = KeyPromoterUtils.getKeyboardShortcutsText(anAction);
                 description = anAction.getTemplatePresentation().getText();
-            }
-        } else if (mySettings.isToolWindowButtonsEnabled() && source instanceof StripeButton) {
-
-            StripeButton stripeButton = (StripeButton) source;
-//            ActivateToolWindowAction.getMnemonicForToolWindow(stripeButton.get)
-            char mnemonic = ((char) stripeButton.getMnemonic2());
-            if (mnemonic >= '0' && mnemonic <= '9') {
-                shortcutText = "Alt+" + mnemonic;
-                description = stripeButton.getText();
-            }
-        } else if (mySettings.isAllButtonsEnabled() && source instanceof JButton) {
-            char mnemonic = ((char) ((JButton) source).getMnemonic());
-            if (mnemonic > 0) {
-                // Not respecting Mac Meta key yet
-                shortcutText = "Alt+" + mnemonic;
-                description = ((JButton) source).getText();
             }
         }
 
@@ -144,14 +145,14 @@ public class KeyPromoter implements ApplicationComponent, AWTEventListener {
             return;
         }
         if (!StringUtil.isEmpty(shortcutText)) {
-                if (stats.get(shortcutText) == null) {
-                    stats.put(shortcutText, 0);
-                }
-                stats.put(shortcutText, stats.get(shortcutText) + 1);
+            if (stats.get(shortcutText) == null) {
+                stats.put(shortcutText, 0);
+            }
+            stats.put(shortcutText, stats.get(shortcutText) + 1);
 
-                // Write shortcut to the brain card
+            // Write shortcut to the brain card
 
-                showTip(frame, e, KeyPromoterUtils.renderMessage(description, shortcutText, stats.get(shortcutText)));
+            showTip(frame, e, KeyPromoterUtils.renderMessage(description, shortcutText, stats.get(shortcutText)));
         } else {
             // Suggest to assign shortcut ot action without shortcut or record such action invocation
             if (anAction != null) {

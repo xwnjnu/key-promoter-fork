@@ -2,14 +2,21 @@
 <idea-plugin>
   <name>Key promoter</name>
   <description>Shows to user how easy he can make same action using only keyboard(menus and toolbar button mouse clicks initiates shortcut display)</description>
-  <version>1.0.8</version>
+  <version>1.0.10</version>
   <vendor email="kashin_d@hotmail.ru">Dmitry Kashin</vendor>
         <change-notes><![CDATA[<ul>
-        <li> 1.0.8 </li>
+        <li> 1.0.10 </li>
         <ul>
-          <li> TODO</li>
+          <li>Menus support for Windows fixed(probably for all platforms except Mac) - http://code.google.com/p/key-promoter/issues/detail?id=8</li>
+          <li>Multiple shortcuts supported(all of the rendered) - http://code.google.com/p/key-promoter/issues/detail?id=3</li>
         </ul>
-        <li> 1.0.7 </li>
+        <li> 1.0.9 </li>
+        <ul>
+          <li>Idea 10.5 and 11 supported now</li>
+          <li>Position of popup in case of dual monitor configuration fixed</li>
+          <li>Popup appeared always on top now(for example over dialogs)</li>
+        </ul>
+        <li> 1.0.8 </li>
         <ul>
           <li> Maia and RubyMine (since 8000) compatible version. (RubyMine repack)</li>
         </ul>
@@ -63,7 +70,7 @@
         </ul>
     </ul>]]>
     </change-notes>
-    <idea-version since-build="8000"/>
+    <idea-version since-build="107.587"/>
     <application-components>
         <component>
             <implementation-class>org.jetbrains.contest.keypromoter.KeyPromoter</implementation-class>
