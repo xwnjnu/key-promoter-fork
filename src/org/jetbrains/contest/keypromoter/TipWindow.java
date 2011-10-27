@@ -24,12 +24,12 @@ public class TipWindow extends JWindow {
         TipLabel myTip = new TipLabel(text, mySettings);
         add(myTip);
         pack();
-        // If fixed posistion show at the bottom of screen, if not show close to the mouse click position
-        if (mySettings.isFixedTipPosistion()) {
+        // If fixed position to show then place it at the bottom of screen, otherwise show it at the mouse click position
+        if (mySettings.isFixedTipPosition()) {
             setLocation(owner.getX() + (int) (owner.getWidth() - myTip.getSize().getWidth()) / 2,
                     owner.getY() + (int) (owner.getHeight() - myTip.getSize().getHeight() - 100));
         } else {
-            // Trying fit to screen
+            // Trying to fit the screen
             Point locationPoint = SwingUtilities.convertPoint(sourceComponent,
                     new Point(sourceComponent.getWidth() + 2, sourceComponent.getHeight() + 2), owner);
             locationPoint.x = owner.getX() + (int) Math.min(locationPoint.getX(), owner.getWidth() - myTip.getSize().getWidth());

@@ -116,11 +116,13 @@ public class KeyPromoter implements ApplicationComponent, AWTEventListener {
                 description = anAction.getTemplatePresentation().getText();
             }
         } else if (mySettings.isToolWindowButtonsEnabled() && source instanceof StripeButton) {
-            // This is hack!!!
-            char mnemonic = ((char) ((StripeButton) source).getMnemonic2());
+
+            StripeButton stripeButton = (StripeButton) source;
+//            ActivateToolWindowAction.getMnemonicForToolWindow(stripeButton.get)
+            char mnemonic = ((char) stripeButton.getMnemonic2());
             if (mnemonic >= '0' && mnemonic <= '9') {
                 shortcutText = "Alt+" + mnemonic;
-                description = ((StripeButton) source).getText();
+                description = stripeButton.getText();
             }
         } else if (mySettings.isAllButtonsEnabled() && source instanceof JButton) {
             char mnemonic = ((char) ((JButton) source).getMnemonic());
@@ -180,7 +182,7 @@ public class KeyPromoter implements ApplicationComponent, AWTEventListener {
         // Interrupt any pending requests
         myAlarm.cancelAllRequests();
 
-        // Init tip if it is first run
+        // Cleanup tip if it is not first run
         if (myTipWindow != null) {
             myTipWindow.dispose();
             myTipWindow = null;

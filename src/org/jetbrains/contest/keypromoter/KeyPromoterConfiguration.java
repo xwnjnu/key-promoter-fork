@@ -92,7 +92,7 @@ public class KeyPromoterConfiguration extends BaseConfigurable implements Search
         if (!myProposeToCreateShortcutCount.getValue().equals(mySettings.getProposeToCreateShortcutCount()))
             return true;
         if (!myPopupTemplate.getText().equals(mySettings.getPopupTemplate())) return true;
-        if (myFixedTipPosition.isSelected() != mySettings.isFixedTipPosistion()) return true;
+        if (myFixedTipPosition.isSelected() != mySettings.isFixedTipPosition()) return true;
         return false;
     }
 
@@ -123,7 +123,7 @@ public class KeyPromoterConfiguration extends BaseConfigurable implements Search
         myAnimationDelay.setValue(mySettings.getFlashAnimationDelay());
         myProposeToCreateShortcutCount.setValue(mySettings.getProposeToCreateShortcutCount());
         myPopupTemplate.setText(mySettings.getPopupTemplate());
-        myFixedTipPosition.setSelected(mySettings.isFixedTipPosistion());
+        myFixedTipPosition.setSelected(mySettings.isFixedTipPosition());
     }
 
     public void disposeUIResources() {

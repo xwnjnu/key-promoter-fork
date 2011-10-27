@@ -118,7 +118,7 @@ public class KeyPromoterSettings {
         this.backgroundColor = backgroundColor;
     }
 
-    public boolean isFixedTipPosistion() {
+    public boolean isFixedTipPosition() {
         return this.fixedTipPosistion;
     }
 
