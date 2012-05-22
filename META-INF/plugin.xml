@@ -7,7 +7,7 @@
         <change-notes><![CDATA[<ul>
         <li> 1.0.11 </li>
         <ul>
-          <li>Settings now saving</li>
+          <li>Fixed "Plugin settings are reset to initial state on restart" - http://code.google.com/p/key-promoter/issues/detail?id=11 (thanks to Evgeny Shepelyuk)</li>
         </ul>
         <li> 1.0.10 </li>
         <ul>
