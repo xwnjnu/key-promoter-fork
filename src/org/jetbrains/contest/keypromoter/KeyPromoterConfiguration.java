@@ -129,6 +129,10 @@ public class KeyPromoterConfiguration extends BaseConfigurable implements Search
     public void disposeUIResources() {
     }
 
+    public void setSettings(KeyPromoterSettings settings) {
+        mySettings = settings;
+    }
+
     public KeyPromoterSettings getSettings() {
         return mySettings;
     }

@@ -5,6 +5,10 @@
   <version>1.0.10</version>
   <vendor email="kashin_d@hotmail.ru">Dmitry Kashin</vendor>
         <change-notes><![CDATA[<ul>
+        <li> 1.0.11 </li>
+        <ul>
+          <li>Settings now saving</li>
+        </ul>
         <li> 1.0.10 </li>
         <ul>
           <li>Menus support for Windows fixed(probably for all platforms except Mac) - http://code.google.com/p/key-promoter/issues/detail?id=8</li>
