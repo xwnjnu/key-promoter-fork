@@ -7,7 +7,7 @@
         <change-notes><![CDATA[<ul>
         <li> 1.0.11 </li>
         <ul>
-          <li>Fixed "Plugin settings are reset to initial state on restart" - http://code.google.com/p/key-promoter/issues/detail?id=11 (thanks to Evgeny Shepelyuk)</li>
+          <li>Fixed "Plugin settings are reset to initial state on restart" - http://code.google.com/p/key-promoter/issues/detail?id=11 (thanks to Joakim Erelt)</li>
         </ul>
         <li> 1.0.10 </li>
         <ul>
