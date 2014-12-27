@@ -19,6 +19,7 @@ import java.awt.*;
 import java.awt.event.AWTEventListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
+import java.io.FileWriter;
 import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.HashMap;
@@ -52,10 +53,29 @@ public class KeyPromoter implements ApplicationComponent, AWTEventListener {
 
         // DataContext field to get frame on Mac for example
         myMenuItemDataContextField = KeyPromoterUtils.getFieldOfType(ActionMenuItem.class, DataContext.class);
+
     }
 
     public void disposeComponent() {
         Toolkit.getDefaultToolkit().removeAWTEventListener(this);
+
+        // write stats to file
+        try {
+            String home = System.getenv("HOME");
+            FileWriter writer = new FileWriter(home+"/keypromoterstats.csv");
+
+            for (Map.Entry<String, Integer> entry : stats.entrySet()) {
+                writer.append(entry.getKey());
+                writer.append(",");
+                writer.append(entry.getValue().toString());
+                writer.append("\n");
+            }
+
+            writer.flush();
+            writer.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @NotNull
