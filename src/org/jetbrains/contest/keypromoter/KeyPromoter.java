@@ -1,6 +1,9 @@
 package org.jetbrains.contest.keypromoter;
 
-import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.actionSystem.ActionManager;
+import com.intellij.openapi.actionSystem.AnAction;
+import com.intellij.openapi.actionSystem.DataContext;
+import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.actionSystem.impl.ActionButton;
 import com.intellij.openapi.actionSystem.impl.ActionMenuItem;
 import com.intellij.openapi.actionSystem.impl.actionholder.ActionRef;
@@ -14,11 +17,21 @@ import com.intellij.openapi.wm.impl.StripeButton;
 import com.intellij.util.Alarm;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JMenuItem;
+import javax.swing.JWindow;
+import javax.swing.SwingUtilities;
+import java.awt.AWTEvent;
+import java.awt.Component;
+import java.awt.Event;
+import java.awt.Toolkit;
 import java.awt.event.AWTEventListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.lang.reflect.Field;
 import java.util.Collections;
@@ -45,8 +58,27 @@ public class KeyPromoter implements ApplicationComponent, AWTEventListener {
     private JWindow myTipWindow;
     private Map<String, Integer> stats = Collections.synchronizedMap(new HashMap<String, Integer>());
     private Map<String, Integer> withoutShortcutStats = Collections.synchronizedMap(new HashMap<String, Integer>());
+    private String filename = System.getenv("HOME") + "/keypromoterstats.csv";
 
     public void initComponent() {
+
+        // try to read stats from file
+
+        try {
+            BufferedReader br = new BufferedReader(new FileReader(filename));
+            String line;
+
+            while((line=br.readLine())!=null){
+                String str[] = line.split(",");
+                stats.put(str[0], Integer.valueOf(str[1]));
+            }
+        } catch (FileNotFoundException e) {
+            System.out.println(filename + " not found. Creating new stats.");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
         Toolkit.getDefaultToolkit().addAWTEventListener(this, AWTEvent.MOUSE_EVENT_MASK | AWTEvent.WINDOW_EVENT_MASK | AWTEvent.WINDOW_STATE_EVENT_MASK/* | AWTEvent.KEY_EVENT_MASK*/);
         KeyPromoterConfiguration component = ApplicationManager.getApplication().getComponent(KeyPromoterConfiguration.class);
         mySettings = component.getSettings();
@@ -61,8 +93,8 @@ public class KeyPromoter implements ApplicationComponent, AWTEventListener {
 
         // write stats to file
         try {
-            String home = System.getenv("HOME");
-            FileWriter writer = new FileWriter(home+"/keypromoterstats.csv");
+
+            FileWriter writer = new FileWriter(filename);
 
             for (Map.Entry<String, Integer> entry : stats.entrySet()) {
                 writer.append(entry.getKey());
@@ -188,7 +220,7 @@ public class KeyPromoter implements ApplicationComponent, AWTEventListener {
                             actionLabel = anAction.getTemplatePresentation().getText();
                         }
                         if (Messages.showYesNoDialog(frame, "Would you like to assign shortcut to '" + actionLabel + "' action cause we noticed it was used " + withoutShortcutStats.get(id) + " time(s) by mouse?",
-                                "[KeyPromoter said]: Keyboard usage more productive!", Messages.getQuestionIcon()) == 0) {
+                                "[KeyPromoter Said]: Keyboard Usage More Productive!", Messages.getQuestionIcon()) == 0) {
                             EditKeymapsDialog dialog = new EditKeymapsDialog(((IdeFrameImpl) frame).getProject(), id);
                             dialog.show();
                         }
