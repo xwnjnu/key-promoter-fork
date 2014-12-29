@@ -14,7 +14,7 @@ the most. Thereby, it is more obvious which shortcut combinations are worth lear
 Credits and License of the Key Promoter Plugin
 ----------------------------------------------
 
-Copyright (c) 2012, Dmitry Kashin
+Copyright (c) 2012, Dmitry Kashin <br />
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
