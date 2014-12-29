@@ -69,7 +69,7 @@ public class KeyPromoter implements ApplicationComponent, AWTEventListener {
             String line;
 
             while((line=br.readLine())!=null){
-                String str[] = line.split(",");
+                String str[] = line.split("\t");
                 stats.put(str[0], Integer.valueOf(str[1]));
             }
         } catch (FileNotFoundException e) {
@@ -98,7 +98,7 @@ public class KeyPromoter implements ApplicationComponent, AWTEventListener {
 
             for (Map.Entry<String, Integer> entry : stats.entrySet()) {
                 writer.append(entry.getKey());
-                writer.append(",");
+                writer.append("\t");
                 writer.append(entry.getValue().toString());
                 writer.append("\n");
             }
