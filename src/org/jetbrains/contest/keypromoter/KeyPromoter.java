@@ -63,19 +63,21 @@ public class KeyPromoter implements ApplicationComponent, AWTEventListener {
     public void initComponent() {
 
         // try to read stats from file
+        if (stats.isEmpty()) {
 
-        try {
-            BufferedReader br = new BufferedReader(new FileReader(filename));
-            String line;
+            try {
+                BufferedReader br = new BufferedReader(new FileReader(filename));
+                String line;
 
-            while((line=br.readLine())!=null){
-                String str[] = line.split("\t");
-                stats.put(str[0], Integer.valueOf(str[1]));
+                while ((line = br.readLine()) != null) {
+                    String str[] = line.split("\t");
+                    stats.put(str[0], Integer.valueOf(str[1]));
+                }
+            } catch (FileNotFoundException e) {
+                System.out.println(filename + " not found. Creating new stats.");
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        } catch (FileNotFoundException e) {
-            System.out.println(filename + " not found. Creating new stats.");
-        } catch (Exception e) {
-            e.printStackTrace();
         }
 
 
