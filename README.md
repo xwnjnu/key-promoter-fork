@@ -9,6 +9,8 @@ Additional Features / Modifications
 * Statistics are persisted and thereby not deleted when closing the IDE.
 * The file used is $HOME\keypromoterstats.csv. Further statistics can be obtained from this file, e.g. which shortcuts you do not use
 the most. Thereby, it is more obvious which shortcut combinations are worth learning for you to increase your personal efficiency.
+(e.g.
+`cat ~/keypromoterstats.csv | sort -n -k 2 -r`)
 
 
 Credits and License of the Key Promoter Plugin
