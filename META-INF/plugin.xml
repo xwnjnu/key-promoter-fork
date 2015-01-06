@@ -1,10 +1,12 @@
 <!DOCTYPE idea-plugin PUBLIC "Plugin/DTD" "http://plugins.intellij.net/plugin.dtd">
 <idea-plugin>
   <name>Key promoter</name>
-  <description>Shows to user how easy he can make same action using only keyboard(menus and toolbar button mouse clicks initiates shortcut display)</description>
+  <description>Shows to user how easy he can make same action using only keyboard(menus and toolbar button mouse clicks initiates
+    shortcut display)
+  </description>
   <version>1.0.11</version>
   <vendor email="kashin_d@hotmail.ru">Dmitry Kashin</vendor>
-        <change-notes><![CDATA[<ul>
+  <change-notes><![CDATA[<ul>
         <li> 1.0.11 </li>
         <ul>
           <li>Fixed "Plugin settings are reset to initial state on restart" - http://code.google.com/p/key-promoter/issues/detail?id=11 (thanks to Joakim Erelt)</li>
@@ -73,16 +75,25 @@
           <li> Mac menus clicks now supported (thanks to Yegor Yarko and Dmitry Jemerov) </li>
         </ul>
     </ul>]]>
-    </change-notes>
-    <idea-version since-build="107.587"/>
-    <application-components>
-        <component>
-            <implementation-class>org.jetbrains.contest.keypromoter.KeyPromoter</implementation-class>
-        </component>
-        <component>
-            <implementation-class>org.jetbrains.contest.keypromoter.KeyPromoterConfiguration</implementation-class>
-        </component>
-    </application-components>
-    <!-- Mark the plugin as compatible with RubyMine and other products based on the IntelliJ platform -->
-    <depends>com.intellij.modules.lang</depends>
+  </change-notes>
+  <idea-version since-build="107.587"/>
+  <application-components>
+    <component>
+      <implementation-class>org.jetbrains.contest.keypromoter.KeyPromoter</implementation-class>
+    </component>
+    <component>
+      <implementation-class>org.jetbrains.contest.keypromoter.KeyPromoterConfiguration</implementation-class>
+    </component>
+  </application-components>
+  <!-- Mark the plugin as compatible with RubyMine and other products based on the IntelliJ platform -->
+  <depends>com.intellij.modules.lang</depends>
+
+
+  <extensions defaultExtensionNs="com.intellij">
+
+    <toolWindow id="Key Promoter" anchor="right"
+                factoryClass="org.jetbrains.contest.keypromoter.KeyPromoterToolWindowFactory">
+
+    </toolWindow>
+  </extensions>
 </idea-plugin>
