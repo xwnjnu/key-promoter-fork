@@ -7,7 +7,7 @@ This is a fork of the Key Promoter plugin for IntelliJ Idea. The original source
 Additional Features / Modifications
 -----------------------------------
 * Statistics are persisted and thereby not deleted when closing the IDE.
-* Thereby, it is more obvious which shortcut combinations are worth learning for you to increase your personal efficiency.
+* A top ten missed shortcuts window is added to the IDE. Thereby, it is more obvious which shortcut combinations are worth learning for you to increase your personal efficiency.
 
 
 
