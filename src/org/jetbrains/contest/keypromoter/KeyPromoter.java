@@ -171,7 +171,6 @@ public class KeyPromoter implements ApplicationComponent, AWTEventListener {
                 stats.put(shortcutText, 0);
             }
             stats.put(shortcutText, stats.get(shortcutText) + 1);
-            //statsService.setStats(stats);
 
             // Write shortcut to the brain card
 

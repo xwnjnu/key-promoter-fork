@@ -41,7 +41,6 @@ public class KeyPromoterToolWindowFactory implements ToolWindowFactory {
     refreshButton.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         updateStats();
-        test.setText("moppl?");
         topTenList.setListData(topTen);
       }
     });
