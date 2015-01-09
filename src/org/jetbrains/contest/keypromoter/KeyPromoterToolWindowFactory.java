@@ -12,6 +12,7 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
+import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -31,7 +32,7 @@ public class KeyPromoterToolWindowFactory implements ToolWindowFactory {
   private KeyPromoterPersistentStats statsService = ServiceManager.getService(KeyPromoterPersistentStats
           .class);
 
-  private JLabel test = new JLabel("Welcome to your Key Promoter stats");
+  private JLabel headline = new JLabel("Key Promoter TOP TEN:");
   private JPanel toolWindowContent = new JPanel();
   private JList topTenList;
   private String[] topTen = new String[10];
@@ -55,8 +56,9 @@ public class KeyPromoterToolWindowFactory implements ToolWindowFactory {
 
 
     toolWindowContent.setLayout(new GridLayout(3, 1));
-    toolWindowContent.add(test);
+    toolWindowContent.add(headline);
     topTenList = new JBList(topTen);
+    topTenList.setFixedCellHeight(14);
 
     toolWindowContent.add(topTenList);
     toolWindowContent.add(refreshButton);
@@ -73,7 +75,7 @@ public class KeyPromoterToolWindowFactory implements ToolWindowFactory {
     int i = 0;
     for (Entry entry : sortedEntries) {
 
-      topTen[i] = entry.getValue() + " times: " + entry.getKey();
+      topTen[i] = "[" + (i+1) + "] " + entry.getValue() + " times: " + entry.getKey();
 
       i++;
       if (i == 10) break;
