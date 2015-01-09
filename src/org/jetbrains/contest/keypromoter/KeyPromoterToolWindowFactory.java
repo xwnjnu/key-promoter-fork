@@ -41,6 +41,8 @@ public class KeyPromoterToolWindowFactory implements ToolWindowFactory {
     refreshButton.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         updateStats();
+        test.setText("moppl?");
+        topTenList.setListData(topTen);
       }
     });
   }
@@ -55,6 +57,7 @@ public class KeyPromoterToolWindowFactory implements ToolWindowFactory {
 
     toolWindowContent.setLayout(new GridLayout(3, 1));
     toolWindowContent.add(test);
+    topTenList = new JBList(topTen);
 
     toolWindowContent.add(topTenList);
     toolWindowContent.add(refreshButton);
@@ -79,7 +82,6 @@ public class KeyPromoterToolWindowFactory implements ToolWindowFactory {
 
     }
 
-    topTenList = new JBList(topTen);
   }
 
   static <K,V extends Comparable<? super V>>
