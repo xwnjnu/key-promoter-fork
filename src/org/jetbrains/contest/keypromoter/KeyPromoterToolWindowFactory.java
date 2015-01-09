@@ -73,11 +73,10 @@ public class KeyPromoterToolWindowFactory implements ToolWindowFactory {
     int i = 0;
     for (Entry entry : sortedEntries) {
 
-      topTen[i] = entry.getKey() + " - " + entry.getValue();
-
+      topTen[i] = entry.getValue() + " times: " + entry.getKey();
 
       i++;
-      if (i == 9) break;
+      if (i == 10) break;
 
     }
 
