@@ -58,28 +58,13 @@ public class KeyPromoter implements ApplicationComponent, AWTEventListener {
     private JWindow myTipWindow;
     private Map<String, Integer> stats = Collections.synchronizedMap(new HashMap<String, Integer>());
     private Map<String, Integer> withoutShortcutStats = Collections.synchronizedMap(new HashMap<String, Integer>());
-    private String filename = System.getenv("HOME") + "/keypromoterstats.csv";
+
+    private KeyPromoterPersistentStats statsService = ApplicationManager.getApplication().getComponent(KeyPromoterPersistentStats
+            .class);
 
     public void initComponent() {
 
-        // try to read stats from file
-        if (stats.isEmpty()) {
-
-            try {
-                BufferedReader br = new BufferedReader(new FileReader(filename));
-                String line;
-
-                while ((line = br.readLine()) != null) {
-                    String str[] = line.split("\t");
-                    stats.put(str[0], Integer.valueOf(str[1]));
-                }
-            } catch (FileNotFoundException e) {
-                System.out.println(filename + " not found. Creating new stats.");
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
+        stats = statsService.getStats();
 
         Toolkit.getDefaultToolkit().addAWTEventListener(this, AWTEvent.MOUSE_EVENT_MASK | AWTEvent.WINDOW_EVENT_MASK | AWTEvent.WINDOW_STATE_EVENT_MASK/* | AWTEvent.KEY_EVENT_MASK*/);
         KeyPromoterConfiguration component = ApplicationManager.getApplication().getComponent(KeyPromoterConfiguration.class);
@@ -93,23 +78,7 @@ public class KeyPromoter implements ApplicationComponent, AWTEventListener {
     public void disposeComponent() {
         Toolkit.getDefaultToolkit().removeAWTEventListener(this);
 
-        // write stats to file
-        try {
-
-            FileWriter writer = new FileWriter(filename);
-
-            for (Map.Entry<String, Integer> entry : stats.entrySet()) {
-                writer.append(entry.getKey());
-                writer.append("\t");
-                writer.append(entry.getValue().toString());
-                writer.append("\n");
-            }
-
-            writer.flush();
-            writer.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        statsService.setStats(stats);
     }
 
     @NotNull
@@ -137,6 +106,9 @@ public class KeyPromoter implements ApplicationComponent, AWTEventListener {
     }
 
     private void handleMouseEvent(AWTEvent e) {
+
+
+
         final Object source = e.getSource();
         String shortcutText = "";
         String description = "";

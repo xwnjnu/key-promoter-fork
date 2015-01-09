@@ -84,6 +84,9 @@
     <component>
       <implementation-class>org.jetbrains.contest.keypromoter.KeyPromoterConfiguration</implementation-class>
     </component>
+    <component>
+      <implementation-class>org.jetbrains.contest.keypromoter.KeyPromoterPersistentStats</implementation-class>
+    </component>
   </application-components>
   <!-- Mark the plugin as compatible with RubyMine and other products based on the IntelliJ platform -->
   <depends>com.intellij.modules.lang</depends>
