@@ -84,15 +84,14 @@
     <component>
       <implementation-class>org.jetbrains.contest.keypromoter.KeyPromoterConfiguration</implementation-class>
     </component>
-    <component>
-      <implementation-class>org.jetbrains.contest.keypromoter.KeyPromoterPersistentStats</implementation-class>
-    </component>
   </application-components>
   <!-- Mark the plugin as compatible with RubyMine and other products based on the IntelliJ platform -->
   <depends>com.intellij.modules.lang</depends>
 
 
   <extensions defaultExtensionNs="com.intellij">
+
+    <applicationService serviceImplementation="org.jetbrains.contest.keypromoter.KeyPromoterPersistentStats"/>
 
     <toolWindow id="Key Promoter" anchor="right"
                 factoryClass="org.jetbrains.contest.keypromoter.KeyPromoterToolWindowFactory">

@@ -9,6 +9,7 @@ import com.intellij.openapi.actionSystem.impl.ActionMenuItem;
 import com.intellij.openapi.actionSystem.impl.actionholder.ActionRef;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ApplicationComponent;
+import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.keymap.impl.ui.EditKeymapsDialog;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.text.StringUtil;
@@ -29,10 +30,6 @@ import java.awt.Toolkit;
 import java.awt.event.AWTEventListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.HashMap;
@@ -59,7 +56,7 @@ public class KeyPromoter implements ApplicationComponent, AWTEventListener {
     private Map<String, Integer> stats = Collections.synchronizedMap(new HashMap<String, Integer>());
     private Map<String, Integer> withoutShortcutStats = Collections.synchronizedMap(new HashMap<String, Integer>());
 
-    private KeyPromoterPersistentStats statsService = ApplicationManager.getApplication().getComponent(KeyPromoterPersistentStats
+    private KeyPromoterPersistentStats statsService = ServiceManager.getService(KeyPromoterPersistentStats
             .class);
 
     public void initComponent() {

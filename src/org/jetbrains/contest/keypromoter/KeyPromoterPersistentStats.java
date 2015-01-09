@@ -25,9 +25,7 @@ import java.util.Map;
                         id = "KeyPromoterStats"
                 )}
 )
-
-public class KeyPromoterPersistentStats implements PersistentStateComponent<KeyPromoterPersistentStats>, com.intellij.openapi
-        .components.ApplicationComponent {
+public class KeyPromoterPersistentStats implements PersistentStateComponent<KeyPromoterPersistentStats> {
 
   private Map<String, Integer> myStats = Collections.synchronizedMap(new HashMap<String, Integer>());
 
@@ -50,19 +48,4 @@ public class KeyPromoterPersistentStats implements PersistentStateComponent<KeyP
     XmlSerializerUtil.copyBean(keyPromoterPersistentStats, this);
   }
 
-  @Override
-  public void initComponent() {
-
-  }
-
-  @Override
-  public void disposeComponent() {
-
-  }
-
-  @NotNull
-  @Override
-  public String getComponentName() {
-    return "KeyPromoterPersistentStats";
-  }
 }
