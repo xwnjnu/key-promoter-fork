@@ -3,13 +3,16 @@ Key Promoter Plugin (Fork)
 
 This is a fork of the Key Promoter plugin for IntelliJ Idea. The original source code can be found at https://code.google.com/p/key-promoter/
 
+The Key Promoter Plugin is intended to show hints when using the mouse for something that can be done with a keyboard shortcut.
 
 Additional Features / Modifications
 -----------------------------------
 * Statistics are persisted and thereby not deleted when closing the IDE.
 * A top ten missed shortcuts window is added to the IDE. Thereby, it is more obvious which shortcut combinations are worth learning for you to increase your personal efficiency.
 
-
+Download
+--------
+https://github.com/athiele/key-promoter-fork/releases
 
 Credits and License of the Key Promoter Plugin
 ----------------------------------------------
