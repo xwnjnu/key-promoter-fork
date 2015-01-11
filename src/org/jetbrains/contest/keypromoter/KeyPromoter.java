@@ -74,8 +74,6 @@ public class KeyPromoter implements ApplicationComponent, AWTEventListener {
 
     public void disposeComponent() {
         Toolkit.getDefaultToolkit().removeAWTEventListener(this);
-
-        statsService.setStats(stats);
     }
 
     @NotNull
@@ -89,11 +87,11 @@ public class KeyPromoter implements ApplicationComponent, AWTEventListener {
             handleMouseEvent(e);
 
         } else if (e.getID() == WindowEvent.WINDOW_ACTIVATED | e.getID() == Event.WINDOW_MOVED) {
-            handleWindowEvent(e);
+            handleWindowEvent();
         }
     }
 
-    private void handleWindowEvent(AWTEvent e) {
+    private void handleWindowEvent() {
         // To paint tip over dialogs
         if (myTipWindow != null && myTipWindow.isVisible()) {
             myTipWindow.setVisible(false);
