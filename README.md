@@ -10,6 +10,8 @@ Additional Features / Modifications
 * Statistics are persisted and thereby not deleted when closing the IDE.
 * A top ten missed shortcuts window is added to the IDE. Thereby, it is more obvious which shortcut combinations are worth learning for you to increase your personal efficiency.
 
+![Screenshot](https://github.com/athiele/key-promoter-fork/releases/download/v2.0.0/screenshot.png)
+
 Download
 --------
 https://github.com/athiele/key-promoter-fork/releases
