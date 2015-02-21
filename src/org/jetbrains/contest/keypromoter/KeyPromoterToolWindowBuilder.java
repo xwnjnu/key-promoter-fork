@@ -1,6 +1,7 @@
 package org.jetbrains.contest.keypromoter;
 
 import com.intellij.openapi.components.ServiceManager;
+import com.intellij.openapi.ui.Messages;
 
 import javax.swing.JButton;
 import javax.swing.JList;
@@ -45,10 +46,12 @@ public class KeyPromoterToolWindowBuilder {
     }
 
     private void resetStats() {
-        Map<String, Integer> stats = statsService.getStats();
-        stats.clear();
-        statsService.setStats(stats);
-        updateTopTen();
+        if (Messages.showYesNoDialog("Do you really want to reset your Key Promoter statistics? This cannot be undone!","Reset statistics", Messages.getQuestionIcon()) == 0) {
+            Map<String, Integer> stats = statsService.getStats();
+            stats.clear();
+            statsService.setStats(stats);
+            updateTopTen();
+        }
     }
 
 
