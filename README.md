@@ -16,6 +16,10 @@ Download
 --------
 https://github.com/athiele/key-promoter-fork/releases
 
+Installation
+------------
+Go to the "Plugins" section of your IntelliJ IDE and choose "Install plugin from disk". Choose the downloaded .jar file. Finally, restart your IDE and enjoy the plugin.
+
 Credits and License of the Key Promoter Plugin
 ----------------------------------------------
 
