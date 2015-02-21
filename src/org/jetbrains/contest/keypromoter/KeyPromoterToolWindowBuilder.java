@@ -47,22 +47,26 @@ public class KeyPromoterToolWindowBuilder {
     private void resetStats() {
         Map<String, Integer> stats = statsService.getStats();
         stats.clear();
-        list1.setListData(new String[10]);
+        statsService.setStats(stats);
+        updateTopTen();
     }
 
 
     private void updateTopTen() {
         Map<String, Integer> stats = statsService.getStats();
-        List<Map.Entry<String, Integer>> sortedEntries = sortByValues(stats);
 
-        int i = 0;
-        for (Map.Entry entry : sortedEntries) {
-            topTen[i] = "[" + (i + 1) + "] " + entry.getValue() + " times: " + entry.getKey();
-            i++;
-            if (i == 10) break;
+        if (!stats.isEmpty()) {
+            List<Map.Entry<String, Integer>> sortedEntries = sortByValues(stats);
+
+            int i = 0;
+            for (Map.Entry entry : sortedEntries) {
+                topTen[i] = "[" + (i + 1) + "] " + entry.getValue() + " times: " + entry.getKey();
+                i++;
+                if (i == 10) break;
+            }
+        } else {
+            topTen = new String[10];
         }
-
-        // put the data into the list
         list1.setListData(topTen);
     }
 
